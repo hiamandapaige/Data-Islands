@@ -285,6 +285,32 @@ body[data-view="play"]::before { content: ""; position: fixed; inset: 0 0 auto; 
 .panel { background: #fff; border-radius: 18px; padding: 20px; display: grid; gap: 10px; }
 .panel.center { text-align: center; justify-items: center; }
 
+
+/* ---------- welcome */
+body[data-view="welcome"] { background: var(--ocean-deep); }
+.welcome { max-width: 640px; margin: 0 auto; padding: 20px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 14px; }
+.w-hero { display: grid; gap: 12px; color: #fff; text-align: center; justify-items: center; padding-bottom: 8px; }
+.welcome-art { width: 100%; max-width: 360px; height: auto; display: block; border-radius: 22px; box-shadow: 0 0 0 4px rgba(255,255,255,.14), 0 14px 30px rgba(0,0,0,.3); }
+.w-hero h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(42px, 11vw, 60px); color: var(--sand); line-height: 1; letter-spacing: .01em; text-shadow: 0 4px 0 rgba(0,0,0,.25); margin-top: 6px; }
+.w-lead { margin: 0; font-size: 18px; line-height: 1.5; color: #dff3f8; max-width: 34ch; font-weight: 700; }
+.w-cta { display: grid; justify-items: center; gap: 8px; margin-top: 4px; }
+.w-cta .gbtn { width: 100%; max-width: 360px; }
+.w-cta.bottom { margin-top: 6px; }
+.w-cta p { margin: 0; color: #bfe6f0; font-size: 14px; }
+.w-card { background: #fff; border-radius: 20px; padding: 18px 18px 20px; display: grid; gap: 10px; }
+.w-card h2 { font-family: var(--f-display); font-weight: 400; font-size: 26px; line-height: 1.1; }
+.w-sub { margin: -4px 0 0; color: var(--ink-soft); }
+.w-list, .w-steps, .w-isles { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.w-list li, .w-steps li, .w-isles li { display: grid; gap: 2px; padding-left: 34px; position: relative; }
+.w-list b, .w-steps b, .w-isles b { font-size: 17px; font-weight: 900; }
+.w-list span, .w-steps span, .w-isles span { color: var(--ink-soft); line-height: 1.45; }
+.w-list li::before { content: ""; position: absolute; left: 4px; top: 4px; width: 16px; height: 19px; background: var(--crystal); clip-path: polygon(50% 0, 100% 38%, 50% 100%, 0 38%); }
+.w-steps, .w-isles { counter-reset: n; }
+.w-steps li::before, .w-isles li::before { counter-increment: n; content: counter(n); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--gold); color: var(--ink); font-family: var(--f-display); font-size: 14px; display: grid; place-items: center; padding-top: 1px; }
+.w-isles li::before { background: var(--ocean); color: #fff; }
+.about { color: #bfe6f0; font-weight: 800; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+.about:hover { color: #fff; }
+
 /* ---------- teaching layer */
 .learn { display: grid; gap: 14px; }
 .learn-tag { justify-self: start; background: var(--crystal); color: #fff; font-weight: 900; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; }
@@ -1675,7 +1701,7 @@ function viewMap() {
   const allDone = ISLANDS.every(islandDone);
   app().innerHTML = '<div class="map-page"><div class="map-top">' +
     '<div class="brand"><h1>Data Islands</h1><p>Six projects. One job offer.</p></div>' +
-    '<div class="stats"><span class="stat" title="Crystals: one per level">' + crystalSvg(true, 20) + "<b>" + crystals() + "</b>/" + TOTAL + '</span><span class="stat" title="Gems: levels finished without losing a heart">' + gemSvg(true, 18) + "<b>" + gems() + '</b></span><a class="gbtn small sand" href="#portfolio">Portfolio</a></div></div>' +
+    '<div class="stats"><span class="stat" title="Crystals: one per level">' + crystalSvg(true, 20) + "<b>" + crystals() + "</b>/" + TOTAL + '</span><span class="stat" title="Gems: levels finished without losing a heart">' + gemSvg(true, 18) + "<b>" + gems() + '</b></span><a class="gbtn small sand" href="#portfolio">Portfolio</a><a class="about" href="#welcome">About</a></div></div>' +
     '<div class="map-frame">' + mapSvg() + "</div>" +
     '<div class="map-cta"><div><span class="eyebrow">' + (allDone ? "Every island cleared" : "Next island") + "</span><b>" + esc(allDone ? "Your portfolio is ready" : cur.name) + "</b><span>" + esc(allDone ? "Six projects, built piece by piece." : cur.project) + "</span></div>" +
     '<a class="gbtn" href="' + (allDone ? "#portfolio" : "#island-" + cur.id) + '">' + (allDone ? "Open portfolio" : "Sail there") + "</a></div></div>";
@@ -2110,14 +2136,60 @@ function viewPortfolio() {
     '<h2 class="sec">Resume lines</h2><ul class="rlist">' + RESUME.map(b => '<li class="' + (islandDone(ISL[b.island]) ? "on" : "") + '"><span class="tick" aria-hidden="true"></span><span>' + esc(b.text) + '<small>' + (islandDone(ISL[b.island]) ? "Earned on " : "Unlocks on ") + esc(ISL[b.island].name) + "</small></span></li>").join("") + "</ul></div>";
 }
 
+/* ---------------- welcome ---------------- */
+function welcomeArt() {
+  return '<svg class="welcome-art" viewBox="0 0 360 170" aria-hidden="true"><defs><radialGradient id="wsea" cx="50%" cy="30%" r="80%"><stop offset="0" stop-color="#1585ab"/><stop offset="1" stop-color="#0b3c5d"/></radialGradient></defs>' +
+    '<rect width="360" height="170" rx="22" fill="url(#wsea)"/>' +
+    '<path d="M24 40 q6 -5 12 0 q6 5 12 0 M290 30 q6 -5 12 0 q6 5 12 0 M300 140 q6 -5 12 0 q6 5 12 0 M40 140 q6 -5 12 0 q6 5 12 0" stroke="rgba(255,255,255,.25)" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '<ellipse cx="180" cy="112" rx="120" ry="44" fill="#5fc9d8" opacity=".55"/>' +
+    '<path d="' + blob(180, 106, 96, 36, 11, .14) + '" fill="#f3cf7a" stroke="#dba84b" stroke-width="3"/>' +
+    emblem({ kind: "cove" }, 160, 100) + avatar(240, 84) + "</svg>";
+}
+function viewWelcome() {
+  const started = crystals() > 0;
+  const who = [
+    ["New to coding", "No experience needed. Level 1 starts with what a variable is."],
+    ["Aiming for a junior data role", "Data engineer, data analyst, or the first step toward either."],
+    ["Learn by doing", "Real workplace problems in short sessions, built for your phone."],
+  ];
+  const get = [
+    ["Python and SQL, the way jobs use them", "Cleaning files, finding duplicates, querying sales, calling APIs, loading PostgreSQL."],
+    ["Practice for interview assessments", "Multiple choice, spot the bug, fill in the code and read the result, like real screening tests."],
+    ["Six portfolio projects", "Each island hands you finished code and a README for GitHub, plus a line for your resume."],
+  ];
+  const how = [
+    ["Get a real problem", "Maya, the lead data engineer at Harbor Goods, explains what's broken and why it matters."],
+    ["Learn it, try it, prove it", "Every idea is explained and tried before you're asked about it. You get 5 hearts per level."],
+    ["Watch the project build", "Each level adds one piece to the real code file until the project is ready to ship."],
+  ];
+  const item = ([t, d]) => "<li><b>" + esc(t) + "</b><span>" + esc(d) + "</span></li>";
+  app().innerHTML = '<div class="welcome">' +
+    '<header class="w-hero">' + welcomeArt() +
+    '<h1>Data Islands</h1><p class="w-lead">Learn Python and SQL from zero, practice for data engineering interviews, and leave with a portfolio of real projects.</p>' +
+    '<div class="w-cta"><button class="gbtn big" data-act="enter">' + (started ? "Continue your journey" : "Start your adventure") + "</button></div></header>" +
+    '<section class="w-card"><h2>Who it\'s for</h2><ul class="w-list">' + who.map(item).join("") + "</ul></section>" +
+    '<section class="w-card"><h2>What you\'ll get</h2><ul class="w-list">' + get.map(item).join("") + "</ul></section>" +
+    '<section class="w-card"><h2>How it works</h2><ol class="w-steps">' + how.map(item).join("") + "</ol></section>" +
+    '<section class="w-card"><h2>The six islands</h2><p class="w-sub">Each island is one project. They unlock in order and build on each other.</p><ol class="w-isles">' +
+    ISLANDS.map(isl => "<li><b>" + esc(isl.name) + "</b><span>" + esc(isl.project) + "</span></li>").join("") + "</ol></section>" +
+    '<div class="w-cta bottom"><button class="gbtn big" data-act="enter">' + (started ? "Continue your journey" : "Start your adventure") + '</button><p>Progress saves automatically in this browser.</p></div></div>';
+  app().onclick = e => {
+    if (!e.target.closest('[data-act="enter"]')) return;
+    P.welcomed = true; save();
+    if (location.hash === "#map") route(); else location.hash = "#map";
+  };
+}
+
 /* ---------------- router ---------------- */
 function route() {
   closeSheet();
   app().onclick = null;
   const h = (location.hash || "#map").slice(1);
   const i = h.indexOf("-"), base = i < 0 ? h : h.slice(0, i), arg = i < 0 ? "" : h.slice(i + 1);
-  document.body.dataset.view = base;
-  if (base === "island") viewIsland(arg);
+  const view = base === "welcome" || (!P.welcomed && !["island", "play", "ship", "portfolio"].includes(base)) ? "welcome" : base;
+  document.body.dataset.view = view;
+  if (view === "welcome") viewWelcome();
+  else if (base === "island") viewIsland(arg);
   else if (base === "play") startLevel(arg);
   else if (base === "ship") viewShip(arg);
   else if (base === "portfolio") viewPortfolio();
@@ -2125,7 +2197,7 @@ function route() {
   if (base !== "play") window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
-let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (document.body.dataset.view === "map" || !location.hash || location.hash === "#map") viewMap(); }, 200); });
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (document.body.dataset.view === "map") viewMap(); }, 200); });
 document.addEventListener("keydown", e => {
   if (document.body.dataset.view !== "play") return;
   const go = $("#go");
