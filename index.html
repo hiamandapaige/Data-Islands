@@ -1,0 +1,1612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b3c5d">
+<style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+<title>Data Islands</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: an island-hopping adventure. A sea-chart world map leads to island pages (story + plan + project file), and levels play one card at a time with a game footer. */
+:root {
+  --ocean-deep: #0b3c5d;
+  --ocean: #11698e;
+  --shallow: #5fc9d8;
+  --sand: #f3cf7a;
+  --sand-deep: #d9a447;
+  --leaf: #2f9e44;
+  --leaf-deep: #1b6d2f;
+  --crystal: #8f5bff;
+  --crystal-light: #c7aaff;
+  --gem: #ff4f8b;
+  --gold: #ffc23d;
+  --gold-deep: #c98f12;
+  --ink: #13222e;
+  --ink-soft: #4b5d6b;
+  --paper: #ffffff;
+  --mist: #eaf4f7;
+  --line: #cfe0e7;
+  --ok: #2b9348;
+  --ok-bg: #dcf5e1;
+  --bad: #d64045;
+  --bad-bg: #fde3e3;
+  --code-bg: #0f2233;
+  --code-ink: #e3eefb;
+  --code-dim: #6f8aa3;
+  --f-display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --f-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--mist); }
+body { color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5; font-weight: 600; }
+body[data-view="map"], body[data-view=""] { background: var(--ocean-deep); }
+[hidden] { display: none !important; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+code { font-family: var(--f-mono); font-size: .88em; }
+.eyebrow { font-family: var(--f-body); font-size: 12px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.muted { color: var(--ink-soft); }
+
+/* chunky game buttons */
+.gbtn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; cursor: pointer; text-decoration: none; text-align: center;
+  font-family: var(--f-display); font-size: 18px; letter-spacing: .02em; line-height: 1.1; padding: 13px 22px 12px; border-radius: 14px;
+  background: var(--gold); color: var(--ink); box-shadow: 0 5px 0 var(--gold-deep); transition: transform .08s, box-shadow .08s; }
+.gbtn:hover { filter: brightness(1.05); }
+.gbtn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--gold-deep); }
+.gbtn.green { background: var(--leaf); color: #fff; box-shadow: 0 5px 0 var(--leaf-deep); }
+.gbtn.red { background: var(--bad); color: #fff; box-shadow: 0 5px 0 #9e2a2e; }
+.gbtn.sand { background: #fff; color: var(--ink); box-shadow: 0 5px 0 var(--line); }
+.gbtn.small { font-size: 15px; padding: 9px 14px 8px; border-radius: 11px; box-shadow: 0 4px 0 var(--gold-deep); }
+.gbtn.small.sand { box-shadow: 0 4px 0 #9fb8c4; }
+.gbtn.big { font-size: 20px; padding: 16px 28px 15px; }
+.gbtn[disabled] { background: #d6e1e6; color: #8aa0ad; box-shadow: 0 5px 0 #b9c9d1; cursor: not-allowed; filter: none; transform: none; }
+
+/* svg bits */
+.crys path { fill: #d6e1e6; stroke: #9fb3bf; stroke-width: 1.5; }
+.crys .facet { fill: rgba(255,255,255,.35); stroke: none; }
+.crys.on path { fill: var(--crystal); stroke: #5b2fd1; }
+.crys.on .facet { fill: var(--crystal-light); }
+.gem path { fill: #e8dfe3; stroke: #c5b5bc; stroke-width: 1.5; }
+.gem.on path { fill: var(--gem); stroke: #c2185b; }
+.heart path { fill: #d6e1e6; }
+.heart.on path { fill: #ff4d5e; stroke: #b3202f; stroke-width: 1.5; }
+.maya { width: 44px; height: 44px; border-radius: 50%; flex: none; display: grid; place-items: center; background: var(--crystal); color: #fff; font-family: var(--f-display); font-size: 22px; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--crystal); }
+
+/* ---------- map ---------- */
+.map-page { max-width: 1100px; margin: 0 auto; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); color: #fff; display: grid; gap: 16px; }
+.map-top { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+.brand h1 { font-family: var(--f-display); font-size: clamp(34px, 6vw, 52px); letter-spacing: .01em; color: var(--sand); text-shadow: 0 4px 0 rgba(0,0,0,.25); line-height: 1; }
+.brand p { margin: 4px 0 0; color: #bfe6f0; font-weight: 800; }
+.stats { display: flex; align-items: center; gap: 12px; }
+.stat { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,.25); padding: 6px 12px; border-radius: 99px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.stat b { font-family: var(--f-display); font-size: 20px; font-weight: 400; }
+.map-frame { border-radius: 22px; overflow: hidden; box-shadow: 0 0 0 4px rgba(255,255,255,.14), 0 20px 40px rgba(0,0,0,.3); }
+.world { display: block; width: 100%; height: auto; }
+.route { fill: none; stroke: rgba(255,255,255,.6); stroke-width: 4; stroke-dasharray: 2 12; stroke-linecap: round; }
+.route.done { stroke: var(--gold); stroke-dasharray: none; stroke-width: 5; }
+.isle { cursor: pointer; }
+.isle .isle-body { transition: transform .2s; transform-box: fill-box; transform-origin: center; }
+.isle:hover .isle-body, .isle:focus-visible .isle-body { transform: translateY(-5px); }
+.isle.locked { filter: grayscale(.9); opacity: .55; }
+.isle-name { font-family: var(--f-display); font-size: 17px; fill: #fff; letter-spacing: .02em; }
+.pip { fill: rgba(255,255,255,.18); stroke: #fff; stroke-width: 1.5; }
+.pip.on { fill: var(--crystal); stroke: var(--crystal-light); }
+.bob { animation: bob 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+.smoke { animation: smoke 3s ease-in-out infinite; transform-box: fill-box; }
+@keyframes smoke { 50% { transform: translateY(-6px); opacity: .7; } }
+.map-cta { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: #fff; color: var(--ink); border-radius: 18px; padding: 16px 18px; }
+.map-cta > div { display: grid; gap: 2px; }
+.map-cta b { font-family: var(--f-display); font-size: 26px; font-weight: 400; line-height: 1.1; }
+.map-cta span:last-child { color: var(--ink-soft); }
+
+/* ---------- pages ---------- */
+.page { max-width: 860px; margin: 0 auto; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 56px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 16px; }
+.back { font-weight: 800; text-decoration: none; color: var(--ocean); justify-self: start; }
+.back:hover { text-decoration: underline; }
+.isle-head { display: grid; gap: 6px; background: linear-gradient(135deg, var(--ocean), var(--ocean-deep)); color: #fff; border-radius: 22px; padding: 22px 22px 24px; position: relative; overflow: hidden; }
+.isle-head .eyebrow { color: #bfe6f0; }
+.isle-head h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(34px, 6vw, 50px); letter-spacing: .01em; color: var(--sand); line-height: 1.05; text-shadow: 0 3px 0 rgba(0,0,0,.2); }
+.isle-head .proj { margin: 0; font-size: 17px; font-weight: 800; }
+.isle-head.ship h1 { font-size: clamp(26px, 4.4vw, 38px); }
+.isle-head code { background: rgba(255,255,255,.15); padding: 1px 6px; border-radius: 5px; }
+.bubble { display: flex; gap: 14px; align-items: flex-start; background: #fff; border-radius: 18px; padding: 16px 18px; box-shadow: 0 3px 0 var(--line); }
+.bubble .who { font-size: 13px; font-weight: 900; color: var(--crystal); }
+.bubble p { margin: 4px 0 0; max-width: 62ch; }
+.bubble.big p { font-size: 18px; line-height: 1.55; }
+.sec { font-family: var(--f-display); font-weight: 400; font-size: 26px; margin-top: 8px; }
+.sec-sub { margin: -10px 0 0; color: var(--ink-soft); }
+.stages { display: flex; align-items: stretch; gap: 0; }
+.stage { flex: 1 1 0; min-width: 0; display: grid; gap: 4px; align-content: start; text-decoration: none; background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 4px 0 var(--line); border: 3px solid transparent; transition: transform .1s; }
+.stage:hover { transform: translateY(-2px); }
+.stage-n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--mist); font-family: var(--f-display); font-size: 16px; }
+.stage-part { font-family: var(--f-display); font-size: 19px; line-height: 1.15; }
+.stage-name { font-size: 14px; color: var(--ink-soft); }
+.stage-foot { display: flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 13px; }
+.stage-foot em { font-style: normal; font-weight: 900; color: var(--ink-soft); }
+.stage.done .stage-n { background: var(--crystal); color: #fff; }
+.stage.next { border-color: var(--gold); box-shadow: 0 4px 0 var(--gold-deep); }
+.stage.next .stage-n { background: var(--gold); }
+.stage.next em { color: var(--ink); }
+.stage.locked { opacity: .5; cursor: not-allowed; }
+.stage.locked:hover { transform: none; }
+.arrow { flex: 0 0 22px; align-self: center; height: 4px; background: var(--sand-deep); position: relative; }
+.arrow::after { content: ""; position: absolute; right: -2px; top: -5px; border: 7px solid transparent; border-left-color: var(--sand-deep); border-right: 0; }
+.go-row, .row-c { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+.won { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; background: #f1ebff; border-radius: 16px; padding: 14px 16px; }
+.won > div { display: flex; align-items: center; gap: 10px; }
+.file { border-radius: 14px; overflow: hidden; background: var(--code-bg); box-shadow: 0 4px 0 #091725; min-width: 0; }
+.file-tab { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 12px; background: #16304a; color: var(--code-ink); font-family: var(--f-mono); font-size: 13px; }
+.file-tab span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); margin-right: 8px; }
+.tbtn { background: var(--gold); color: var(--ink); border: 0; border-radius: 8px; padding: 4px 10px; font-weight: 900; font-size: 13px; cursor: pointer; }
+pre.code { margin: 0; padding: 14px 16px; background: var(--code-bg); color: var(--code-ink); font-family: var(--f-mono); font-size: 13.5px; line-height: 1.6; overflow-x: auto; white-space: pre; border-radius: 12px; font-weight: 400; }
+.file pre.code { border-radius: 0; max-height: 420px; overflow: auto; }
+.seg.dim { color: var(--code-dim); }
+.seg.todo { color: #ffd76a; font-style: italic; opacity: .75; }
+.seg.hot { display: inline-block; background: rgba(95, 201, 116, .18); box-shadow: -16px 0 0 rgba(95, 201, 116, .18), 16px 0 0 rgba(95, 201, 116, .18); border-left: 4px solid #5fc974; margin-left: -16px; padding-left: 12px; }
+
+/* ---------- play ---------- */
+body[data-view="play"] { background: #fff; }
+.play { min-height: 100vh; display: flex; flex-direction: column; }
+.play-top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: #fff; display: flex; align-items: center; gap: 14px; padding: 14px max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px)); max-width: 752px; width: 100%; margin: 0 auto; }
+body[data-view="play"]::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: #fff; }
+.xbtn { text-decoration: none; font-size: 22px; color: #9fb3bf; font-weight: 900; padding: 2px 6px; }
+.xbtn:hover { color: var(--ink); }
+.pbar { flex: 1; height: 16px; border-radius: 99px; background: #e2ecf0; overflow: hidden; }
+.pbar i { display: block; height: 100%; width: 0; background: linear-gradient(var(--leaf), #44c060); border-radius: 99px; transition: width .35s; box-shadow: inset 0 -4px 0 rgba(0,0,0,.12); }
+.hearts { display: flex; gap: 3px; }
+.hearts.hit { animation: hit .4s; }
+@keyframes hit { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.play-sub { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; max-width: 752px; width: 100%; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); font-size: 13px; color: var(--ink-soft); }
+.chip { background: var(--mist); border-radius: 99px; padding: 3px 10px; font-weight: 900; color: var(--ink); }
+.building code { color: var(--ocean); }
+.card-wrap { flex: 1; width: 100%; max-width: 720px; margin: 0 auto; padding: 22px max(16px, env(safe-area-inset-right, 0px)) 200px max(16px, env(safe-area-inset-left, 0px)); }
+.card { display: grid; gap: 16px; }
+.card.in { animation: cardin .25s ease-out; }
+@keyframes cardin { from { transform: translateY(8px); opacity: .4; } }
+.card.center { text-align: center; justify-items: center; }
+.q { font-family: var(--f-body); font-weight: 900; font-size: clamp(21px, 3.2vw, 26px); line-height: 1.3; }
+.hintline { margin: -8px 0 0; color: var(--ink-soft); font-size: 14px; }
+.opts { display: grid; gap: 10px; }
+.opt { display: flex; gap: 12px; align-items: center; text-align: left; background: #fff; border: 2px solid var(--line); border-bottom-width: 5px; border-radius: 14px; padding: 13px 14px; cursor: pointer; font-size: 16px; font-weight: 700; }
+.opt:hover:not([disabled]) { background: var(--mist); }
+.opt .key { width: 28px; height: 28px; flex: none; border-radius: 8px; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 900; color: var(--ink-soft); }
+.opt.sel { border-color: var(--ocean); background: #e3f3fa; }
+.opt.sel .key { border-color: var(--ocean); color: var(--ocean); }
+.opt.right { border-color: var(--ok); background: var(--ok-bg); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.opt[disabled] { cursor: default; }
+.tbl { overflow-x: auto; border-radius: 12px; border: 2px solid var(--line); background: #fff; }
+.tbl table { border-collapse: collapse; width: 100%; font-family: var(--f-mono); font-size: 13.5px; font-weight: 400; }
+.tbl th { background: var(--mist); text-align: left; padding: 8px 12px; font-weight: 600; white-space: nowrap; }
+.tbl td { padding: 9px 12px; border-top: 1px solid var(--line); white-space: pre; }
+.tbl .blank { color: #9fb3bf; font-style: italic; font-family: var(--f-body); }
+.tbl tr[data-row][role="button"] { cursor: pointer; }
+.tbl tr[role="button"]:hover td { background: #f4fafc; }
+.tbl .fl { width: 40px; text-align: center; }
+.flagbox { display: inline-block; width: 20px; height: 20px; border-radius: 6px; border: 2px solid #9fb3bf; vertical-align: middle; }
+.tbl tr.flagged td { background: #fff1e0; }
+.tbl tr.flagged .flagbox { background: var(--bad); border-color: var(--bad); box-shadow: inset 0 0 0 3px #fff; }
+.tbl tr.right td { background: var(--ok-bg); }
+.tbl tr.wrong td { background: var(--bad-bg); }
+.tbl tr.missed td { background: var(--bad-bg); }
+.tbl tr.missed .flagbox { border-color: var(--bad); border-style: dashed; }
+.match { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.mcol { display: grid; gap: 10px; align-content: start; }
+.mcard { text-align: left; background: #fff; border: 2px solid var(--line); border-bottom-width: 5px; border-radius: 14px; padding: 12px; cursor: pointer; font-size: 15px; font-weight: 700; min-height: 56px; word-break: break-word; }
+.mcard.sel { border-color: var(--ocean); background: #e3f3fa; }
+.mcard.ok { border-color: var(--ok); background: var(--ok-bg); opacity: .75; cursor: default; }
+.mcard.bad, .shake { border-color: var(--bad); background: var(--bad-bg); animation: hit .4s; }
+.slots { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.slots li.empty { border: 2px dashed var(--line); border-radius: 12px; min-height: 48px; display: flex; align-items: center; padding: 0 14px; color: #9fb3bf; font-weight: 900; }
+.pool { display: grid; gap: 8px; }
+.piece { width: 100%; text-align: left; background: #fff; border: 2px solid var(--line); border-bottom-width: 5px; border-radius: 12px; padding: 11px 14px; cursor: pointer; font-weight: 700; font-size: 15px; }
+.mono .piece, .mono li { font-family: var(--f-mono); font-size: 13.5px; font-weight: 400; white-space: pre-wrap; }
+.piece.placed { border-color: var(--ocean); background: #e3f3fa; }
+.piece.right { border-color: var(--ok); background: var(--ok-bg); }
+.piece.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.correct-list { background: var(--ok-bg); border-radius: 12px; padding: 12px 14px; }
+.correct-list ol { margin: 6px 0 0; padding-left: 22px; display: grid; gap: 4px; }
+.fillcode { line-height: 2.2; }
+.slot { font-family: var(--f-mono); font-size: 13.5px; min-width: 64px; padding: 1px 8px; margin: 0 2px; border-radius: 6px; border: 2px dashed #6f8aa3; background: rgba(255,255,255,.06); color: #fff; cursor: pointer; vertical-align: baseline; }
+.slot.filled { border-style: solid; border-color: var(--gold); background: rgba(255,194,61,.18); }
+.slot.right { border-color: #5fc974; background: rgba(95,201,116,.22); }
+.slot.wrong { border-color: #ff6b70; background: rgba(255,107,112,.2); }
+.slot s { opacity: .6; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.tok { font-family: var(--f-mono); font-size: 14.5px; background: #fff; border: 2px solid var(--line); border-bottom-width: 5px; border-radius: 12px; padding: 9px 14px; cursor: pointer; }
+.tok:hover:not([disabled]) { background: var(--mist); }
+.tok[disabled] { opacity: .25; cursor: default; }
+.tok.sel { border-color: var(--ocean); background: #e3f3fa; }
+.buglines { background: var(--code-bg); border-radius: 12px; padding: 8px 0; overflow-x: auto; }
+.bl, .fixline { display: flex; width: 100%; gap: 12px; text-align: left; background: none; border: 0; border-left: 4px solid transparent; padding: 5px 14px; cursor: pointer; color: var(--code-ink); }
+.bl code, .fixline code { white-space: pre; font-size: 13.5px; }
+.bl .ln, .fixline .ln { color: var(--code-dim); font-family: var(--f-mono); font-size: 12px; min-width: 22px; padding-top: 2px; }
+.bl:hover:not([disabled]) { background: rgba(255,255,255,.06); }
+.bl.sel { background: rgba(255,194,61,.18); border-left-color: var(--gold); }
+.bl.right { background: rgba(255,107,112,.18); border-left-color: #ff6b70; }
+.bl.wrong { background: rgba(255,255,255,.04); border-left-color: #6f8aa3; }
+.fixline { background: rgba(95,201,116,.18); border-left-color: #5fc974; cursor: default; }
+.fixline .ln { color: #8ff0a4; }
+.apiwin { display: grid; gap: 12px; background: var(--mist); border-radius: 16px; padding: 14px; }
+.api-cities { display: flex; gap: 8px; flex-wrap: wrap; }
+.api-req { font-size: 13px; background: #fff; border-radius: 10px; padding: 10px 12px; overflow-x: auto; white-space: nowrap; }
+.api-req .verb { font-weight: 900; color: var(--leaf); margin-right: 6px; }
+.api-req b { color: var(--ocean); }
+#apisend { justify-self: start; }
+.api-status { font-weight: 800; color: var(--ink-soft); margin-bottom: 8px; }
+.api-status.ok b { color: var(--ok); }
+.big-ico { display: flex; gap: 6px; }
+.big-ico svg { width: 44px; height: 40px; }
+.done-card { text-align: left; }
+.burst { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; }
+.burst svg { animation: pop .6s cubic-bezier(.2, 1.6, .4, 1); filter: drop-shadow(0 8px 12px rgba(143, 91, 255, .35)); }
+@keyframes pop { from { transform: scale(.2) rotate(-20deg); opacity: 0; } }
+.done-card > .q, .done-card > p:first-of-type { text-align: center; }
+.done-card > p { margin: -6px 0 0; }
+.built { font-family: var(--f-display); font-weight: 400; font-size: 22px; margin-top: 8px; }
+
+/* footer */
+.foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: #fff; border-top: 2px solid #e2ecf0; padding: 14px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.foot:empty { display: none; }
+.foot-in { max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.foot .gbtn { min-width: 160px; }
+.foot.good { background: var(--ok-bg); border-top-color: #b6e6c0; }
+.foot.badf { background: var(--bad-bg); border-top-color: #f5bcbc; }
+.fb { display: grid; gap: 4px; max-height: 40vh; overflow: auto; }
+.fb strong { font-family: var(--f-display); font-weight: 400; font-size: 24px; }
+.good .fb strong { color: var(--ok); } .badf .fb strong { color: var(--bad); }
+.fb p { margin: 0; max-width: 60ch; font-size: 15px; }
+.fb .again { color: var(--ink-soft); font-size: 13px; }
+
+/* portfolio */
+.resume-unlock { background: #f1ebff; border-radius: 16px; padding: 14px 16px; }
+.resume-unlock p { margin: 4px 0 0; font-size: 18px; font-weight: 800; }
+.plist { display: grid; gap: 10px; }
+.pitem { display: grid; gap: 2px; text-decoration: none; background: #fff; border-radius: 16px; padding: 14px 16px; box-shadow: 0 4px 0 var(--line); }
+.pitem.done { box-shadow: 0 4px 0 var(--crystal); }
+.pi-isle { font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--ocean); }
+.pitem b { font-size: 17px; }
+.pi-stat { display: flex; align-items: center; gap: 2px; font-size: 13px; color: var(--ink-soft); font-weight: 800; margin-top: 4px; }
+.rlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.rlist li { display: flex; gap: 12px; align-items: flex-start; background: #fff; border-radius: 14px; padding: 12px 14px; color: var(--ink-soft); }
+.rlist li small { display: block; font-size: 12px; margin-top: 2px; }
+.rlist .tick { width: 24px; height: 24px; flex: none; border-radius: 50%; border: 3px solid var(--line); }
+.rlist li.on { color: var(--ink); font-weight: 800; }
+.rlist li.on .tick { border-color: var(--crystal); background: var(--crystal); box-shadow: inset 0 0 0 4px #fff; }
+.panel { background: #fff; border-radius: 18px; padding: 20px; display: grid; gap: 10px; }
+.panel.center { text-align: center; justify-items: center; }
+.toast { position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 16px); opacity: 0; background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 99px; font-weight: 800; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 20; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 720px) {
+  .stages { flex-direction: column; }
+  .arrow { flex: 0 0 18px; width: 4px; height: 18px; align-self: center; }
+  .arrow::after { right: -5px; top: auto; bottom: -4px; border: 7px solid transparent; border-top-color: var(--sand-deep); border-bottom: 0; }
+  .stage { grid-template-columns: 30px minmax(0, 1fr) auto; column-gap: 12px; align-items: center; }
+  .stage-n { grid-row: span 2; }
+  .stage-foot { grid-row: 1 / span 2; grid-column: 3; margin: 0; }
+  .foot-in { flex-direction: column; align-items: stretch; }
+  .foot .gbtn { width: 100%; }
+  .match { gap: 8px; }
+  .mcard { font-size: 14px; padding: 10px; }
+  .map-cta .gbtn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const ISLANDS = [];
+
+/* ============ 1. CSV COVE ============ */
+const ORDERS_TABLE = { cols: ["order_id", "city", "amount"], rows: [
+  ["1001", " austin ", "$1,200.50"],
+  ["1002", "Austin", "35.00"],
+  ["1003", "AUSTIN", ""],
+  ["1004", "Denver", "abc"],
+  ["1005", " denver", "18.25"],
+] };
+ISLANDS.push({
+  id: "csv", name: "CSV Cove", kind: "cove",
+  project: "Python script that cleans and organizes a messy CSV file",
+  file: "clean_orders.py", lang: "python",
+  brief: "Every night our old checkout system exports orders.csv, and Finance builds the revenue report from it. This morning the report said Austin sold $0. The file is a mess, and fixing it by hand every night isn't an option.",
+  goal: "Write a script that cleans the file automatically, every night, the same way.",
+  head: `"""clean_orders.py
+Cleans the nightly orders export so the finance report is correct.
+"""
+import csv`,
+  foot: `if __name__ == "__main__":
+    rows = read_orders("orders.csv")
+    clean, skipped = clean_rows(rows)
+    save_orders(clean, "orders_clean.csv")
+    print(f"Kept {len(clean)} rows, skipped {skipped}")`,
+  sample: { name: "orders.csv", text: "order_id,city,amount\n1001, austin ,\"$1,200.50\"\n1002,Austin,35.00\n1003,AUSTIN,\n1004,Denver,abc\n1005, denver,18.25\n" },
+  levels: [
+    { id: "csv1", name: "Meet the mess", part: "The rules",
+      piece: `# The rules this script enforces:
+#   1. city: trim spaces and use Title Case     (" austin " -> "Austin")
+#   2. amount: remove "$" and "," then make it a number
+#   3. rows with a missing or broken amount are skipped and counted`,
+      cards: [
+        { t: "story", say: "Here are five rows from last night's file. Before writing any code, a data engineer looks at the data and asks: what's wrong with it, and what would break the report?", show: { table: ORDERS_TABLE } },
+        { t: "flag", q: "Tap the rows whose amount can't be added into a revenue total.", table: ORDERS_TABLE, bad: [2, 3],
+          why: "A blank and the word \"abc\" aren't numbers. We can't guess what they should be, so the script will skip those rows and count them." },
+        { t: "mcq", q: "Finance sees Austin listed three different ways. Why?", opts: ["There are three Austin stores", "It's the same city typed with different spaces and capital letters", "The file is corrupted"], a: 1,
+          why: "Computers compare text exactly, so \" austin \", \"Austin\" and \"AUSTIN\" count as three different cities until we standardize them." },
+        { t: "match", q: "Match each problem to its fix.", pairs: [
+            ["Extra spaces: \" austin \"", ".strip()"],
+            ["Mixed case: \"AUSTIN\"", ".title()"],
+            ["Money as text: \"$1,200.50\"", "Remove $ and , then float()"],
+            ["Blank amount: \"\"", "Skip the row and count it"]],
+          why: "Each problem gets one clear rule. Writing the rules down first makes the code easy to write and easy to explain in an interview." },
+        { t: "mcq", q: "The file has about 40,000 rows and arrives every night. Why write a script instead of fixing it in Excel?", opts: ["Excel can't open CSV files", "A script applies the same fixes every night, in seconds, without mistakes", "Scripts are required by law"], a: 1,
+          why: "Automation is the whole job: repeatable, fast and consistent. That's what \"data pipeline\" means." },
+      ] },
+    { id: "csv2", name: "Read the file", part: "Read",
+      piece: `def read_orders(path):
+    with open(path, newline="") as f:
+        return list(csv.DictReader(f))`,
+      cards: [
+        { t: "story", say: "Step one of every pipeline: get the data into your program. Python's built-in csv module reads a file row by row. csv.DictReader turns each row into a dictionary, so you write row[\"city\"] instead of remembering that city is column 2.", show: { code: `{"order_id": "1001", "city": " austin ", "amount": "$1,200.50"}` } },
+        { t: "mcq", q: "With csv.DictReader, what is each row?", opts: ["A list: [\"1001\", \" austin \", \"$1,200.50\"]", "A dictionary: {\"order_id\": \"1001\", \"city\": \" austin \", ...}", "One long string"], a: 1,
+          why: "The header line becomes the keys. Notice every value is still text, even the amount." },
+        { t: "fill", q: "Fill in the blanks to read orders.csv into a list of rows.", code: `import [[0]]
+
+def read_orders(path):
+    with [[1]](path, newline="") as f:
+        return list(csv.[[2]](f))`, blanks: ["csv", "open", "DictReader"], extra: ["pandas", "read", "reader"],
+          why: "with open(...) closes the file automatically when the block ends, even if something goes wrong." },
+        { t: "mcq", q: "row = {\"amount\": \"35.00\"}. What is row[\"amount\"] + row[\"amount\"]?", opts: ["70.0", "\"35.0035.00\"", "An error"], a: 1,
+          why: "CSV values are text, and + glues text together. That's exactly why we'll convert amounts to numbers." },
+        { t: "order", q: "Put these lines in order to print every city in the file.", code: true, items: ["import csv", "with open(\"orders.csv\", newline=\"\") as f:", "    reader = csv.DictReader(f)", "    for row in reader:", "        print(row[\"city\"])"],
+          why: "Import, open, create the reader, loop, use each row. The indentation shows which lines live inside which block." },
+      ] },
+    { id: "csv3", name: "Fix each field", part: "Fix fields",
+      piece: `def clean_city(city):
+    return city.strip().title()
+
+
+def to_amount(text):
+    return float(text.replace("$", "").replace(",", "").strip())`,
+      cards: [
+        { t: "story", say: "Now two small helper functions: one fixes city names, one turns money text into a number. Small functions with clear names are easy to test, and a teammate can read each one in seconds." },
+        { t: "fill", q: "Make clean_city turn \" aUSTIN \" into \"Austin\".", code: `def clean_city(city):
+    return city.[[0]]().[[1]]()`, blanks: ["strip", "title"], extra: ["upper", "split", "lower"],
+          why: ".strip() removes spaces at both ends, then .title() capitalizes the first letter of each word." },
+        { t: "mcq", q: "What does clean_city(\"  dENVER \") return?", code: `def clean_city(city):
+    return city.strip().title()`, opts: ["\"dENVER\"", "\"Denver\"", "\"DENVER\""], a: 1,
+          why: "Spaces trimmed, then Title Case: \"Denver\"." },
+        { t: "fill", q: "Make to_amount turn \"$1,200.50\" into the number 1200.5.", code: `def to_amount(text):
+    return [[0]](text.replace("$", [[1]]).replace([[2]], "").strip())`, blanks: ["float", "\"\"", "\",\""], extra: ["int", "\" \"", "\".\""],
+          why: "Replace \"$\" with nothing, replace \",\" with nothing, then float(). int() would fail because of the .50." },
+        { t: "bug", q: "This crashes on \"$1,200.50\". Tap the line that causes it.", lines: ["def to_amount(text):", "    text = text.replace(\"$\", \"\")", "    return float(text)"], a: 2,
+          fix: "    return float(text.replace(\",\", \"\"))",
+          why: "float() can't read the comma in \"1,200.50\". Remove it first." },
+        { t: "mcq", q: "to_amount(\"abc\") raises a ValueError. Is that good or bad?", opts: ["Bad: functions should never raise errors", "Good: the error tells the caller this row is broken, and the caller decides what to do", "It doesn't raise anything"], a: 1,
+          why: "Small functions report problems; the code that loops over rows decides to skip and count. You'll write that next." },
+      ] },
+    { id: "csv4", name: "Skip bad rows, save the file", part: "Skip & save",
+      piece: `def clean_rows(rows):
+    clean, skipped = [], 0
+    for row in rows:
+        try:
+            amount = to_amount(row["amount"])
+        except ValueError:
+            skipped += 1
+            continue
+        clean.append({
+            "order_id": row["order_id"].strip(),
+            "city": clean_city(row["city"]),
+            "amount": amount,
+        })
+    return clean, skipped
+
+
+def save_orders(rows, path):
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["order_id", "city", "amount"])
+        writer.writeheader()
+        writer.writerows(rows)`,
+      cards: [
+        { t: "story", say: "Some rows will always be broken. A good pipeline doesn't crash on row 30,512, and it doesn't hide problems either. It skips bad rows and counts them, so you can report: kept 39,880 rows, skipped 120." },
+        { t: "fill", q: "Skip rows whose amount can't be converted.", code: `for row in rows:
+    [[0]]:
+        amount = to_amount(row["amount"])
+    [[1]] ValueError:
+        skipped += 1
+        [[2]]`, blanks: ["try", "except", "continue"], extra: ["break", "if", "else"],
+          why: "try runs code that might fail, except catches that specific error, and continue jumps to the next row. break would stop processing every row after it." },
+        { t: "mcq", q: "Why count skipped rows instead of quietly dropping them?", opts: ["It makes the code faster", "So someone notices if 5,000 rows suddenly fail; silent data loss causes wrong reports", "Python requires it"], a: 1,
+          why: "If the skip count jumps one night, something changed upstream. Counting turns a hidden problem into a visible one." },
+        { t: "order", q: "Order the lines that save the clean file.", code: true, items: ["with open(\"orders_clean.csv\", \"w\", newline=\"\") as f:", "    writer = csv.DictWriter(f, fieldnames=[\"order_id\", \"city\", \"amount\"])", "    writer.writeheader()", "    writer.writerows(clean)"],
+          why: "Open for writing (\"w\"), make a writer that knows the columns, write the header line, then every row." },
+        { t: "mcq", q: "Run on the five sample rows from the start of the island. What prints?", opts: ["Kept 5 rows, skipped 0", "Kept 3 rows, skipped 2", "Kept 2 rows, skipped 3"], a: 1,
+          why: "Rows 1003 (blank) and 1004 (\"abc\") are skipped; the other three are cleaned and saved." },
+      ] },
+  ],
+});
+
+/* ============ 2. DUPLICATE DUNES ============ */
+const CUSTOMERS_TABLE = { cols: ["id", "name", "email", "updated_at"], rows: [
+  ["1", "Ava Reyes", "ava@mail.com", "2026-01-03"],
+  ["2", "Liam Patel", "liam@mail.com", "2026-02-11"],
+  ["3", "Ava Reyes", " AVA@mail.com", "2026-03-20"],
+  ["4", "Ava R.", "ava@mail.com", "2026-02-01"],
+  ["5", "Liam Patel", "liam.p@work.io", "2026-01-15"],
+  ["6", "Maya Kim", "maya@mail.com", "2026-03-02"],
+] };
+ISLANDS.push({
+  id: "dupes", name: "Duplicate Dunes", kind: "dunes",
+  project: "Script that identifies duplicate records",
+  file: "find_duplicates.py", lang: "python",
+  brief: "Marketing sent the spring promo and some customers got it three times. One wrote in: \"Please stop!\" The customer list has the same people in it more than once, typed slightly differently each time.",
+  goal: "Write a script that finds the duplicates and keeps one clean record per person.",
+  head: `"""find_duplicates.py
+Finds customers who appear more than once so marketing emails each person once.
+"""
+import csv`,
+  foot: `if __name__ == "__main__":
+    with open("customers.csv", newline="") as f:
+        customers = list(csv.DictReader(f))
+    seen, duplicates = find_duplicates(customers)
+    print(f"{len(customers)} rows, {len(seen)} unique people, {len(duplicates)} duplicates")
+    for row in duplicates:
+        print("  duplicate:", row["id"], row["email"].strip())
+    unique = keep_latest(customers)
+    print(f"Keeping {len(unique)} records")`,
+  sample: { name: "customers.csv", text: "id,name,email,updated_at\n1,Ava Reyes,ava@mail.com,2026-01-03\n2,Liam Patel,liam@mail.com,2026-02-11\n3,Ava Reyes, AVA@mail.com,2026-03-20\n4,Ava R.,ava@mail.com,2026-02-01\n5,Liam Patel,liam.p@work.io,2026-01-15\n6,Maya Kim,maya@mail.com,2026-03-02\n" },
+  levels: [
+    { id: "dupes1", name: "Spot the doubles", part: "The rule",
+      piece: `# A duplicate = two rows with the same email after cleanup.
+# Names are NOT used: two different people can share a name,
+# and one person can type their name differently.`,
+      cards: [
+        { t: "story", say: "Here's a slice of the customer list. Look closely: some of these rows are the same person.", show: { table: CUSTOMERS_TABLE } },
+        { t: "flag", q: "Tap every row that repeats an earlier person with the same email (ignore spaces and capitals).", table: CUSTOMERS_TABLE, bad: [2, 3],
+          why: "Rows 3 and 4 are Ava again: \" AVA@mail.com\" and \"ava@mail.com\" are the same address once cleaned up." },
+        { t: "mcq", q: "Which column is the safest way to decide two rows are the same person?", opts: ["name", "email", "id"], a: 1,
+          why: "Names repeat and get typed differently (\"Ava R.\"), and id is just the number each signup got, so duplicates have different ids. An email belongs to one person." },
+        { t: "mcq", q: "Rows 2 and 5 are both \"Liam Patel\" but have different emails. What should the script do?", opts: ["Merge them: same name", "Treat them as two records; we can't be sure it's one person", "Delete both"], a: 1,
+          why: "A wrong merge mixes two people's data, which is worse than a duplicate email. When unsure, keep both and flag for a human." },
+      ] },
+    { id: "dupes2", name: "Make emails comparable", part: "Normalize",
+      piece: `def normalize_email(email):
+    return email.strip().lower()`,
+      cards: [
+        { t: "story", say: "To a computer, \" AVA@mail.com\" and \"ava@mail.com\" are different strings. Before comparing, normalize: turn every value into one standard form. This one idea solves half of all duplicate problems." },
+        { t: "match", q: "Match each string method to what it does.", pairs: [
+            [".strip()", "Removes spaces at both ends"],
+            [".lower()", "Makes every letter lowercase"],
+            [".upper()", "Makes every letter uppercase"],
+            [".replace(\" \", \"\")", "Removes every space, even in the middle"]],
+          why: "For emails we want .strip() and .lower(): trim the edges and use one case." },
+        { t: "fill", q: "Finish normalize_email.", code: `def normalize_email(email):
+    return email.[[0]]().[[1]]()`, blanks: ["strip", "lower"], extra: ["title", "upper"],
+          why: "Lowercase is the usual standard form for emails because mail servers treat capitals the same." },
+        { t: "mcq", q: "What does normalize_email(\"  Ava@Mail.COM \") return?", opts: ["\"Ava@Mail.COM\"", "\"ava@mail.com\"", "\"  ava@mail.com \""], a: 1,
+          why: "Spaces trimmed, everything lowercased." },
+      ] },
+    { id: "dupes3", name: "Catch repeats with a dictionary", part: "Find repeats",
+      piece: `def find_duplicates(customers):
+    seen = {}
+    duplicates = []
+    for row in customers:
+        key = normalize_email(row["email"])
+        if key in seen:
+            duplicates.append(row)
+        else:
+            seen[key] = row
+    return seen, duplicates`,
+      cards: [
+        { t: "story", say: "Comparing every row with every other row is slow: 100,000 rows means about 5 billion comparisons. Instead, keep a dictionary of emails you've already seen. Checking `key in seen` is instant, so one pass through the file is enough.", show: { code: `seen = {
+    "ava@mail.com":  {"id": "1", "name": "Ava Reyes", ...},
+    "liam@mail.com": {"id": "2", "name": "Liam Patel", ...},
+}` } },
+        { t: "fill", q: "Finish the loop: repeats go to duplicates, new people go into seen.", code: `for row in customers:
+    key = normalize_email(row["email"])
+    if key [[0]] seen:
+        duplicates.[[1]](row)
+    [[2]]:
+        seen[key] = row`, blanks: ["in", "append", "else"], extra: ["not", "add", "elif"],
+          why: "If we've seen this email, it's a repeat. Otherwise, remember it." },
+        { t: "mcq", q: "After this loop runs over the 6 sample customers, how big are seen and duplicates?", table: CUSTOMERS_TABLE, opts: ["6 and 0", "4 and 2", "3 and 3"], a: 1,
+          why: "seen holds ava, liam, liam.p and maya (4). Rows 3 and 4 are repeats of ava (2)." },
+        { t: "mcq", q: "Why a dictionary for seen instead of a list?", opts: ["Lists can't hold emails", "Looking up a key in a dict is instant; a list checks every item, which gets slow on big files", "Dictionaries sort themselves"], a: 1,
+          why: "This is a classic interview point: dict and set lookups are O(1) on average, list lookups are O(n)." },
+        { t: "bug", q: "This version only finds 1 of the 2 duplicates. Tap the wrong line.", lines: ["seen = {}", "for row in customers:", "    key = row[\"email\"]", "    if key in seen:", "        duplicates.append(row)", "    else:", "        seen[key] = row"], a: 2,
+          fix: "    key = normalize_email(row[\"email\"])",
+          why: "Without normalizing, \" AVA@mail.com\" doesn't match \"ava@mail.com\", so that duplicate slips through." },
+      ] },
+    { id: "dupes4", name: "Keep the right copy", part: "Keep latest",
+      piece: `def keep_latest(customers):
+    latest = {}
+    for row in customers:
+        key = normalize_email(row["email"])
+        if key not in latest or row["updated_at"] > latest[key]["updated_at"]:
+            latest[key] = row
+    return list(latest.values())`,
+      cards: [
+        { t: "story", say: "Finding duplicates is half the job. Marketing needs one row per person, so which copy do you keep? Ava's newest row has the address she updated in March. The rule: keep the most recently updated record." },
+        { t: "mcq", q: "Ava has rows updated 2026-01-03, 2026-03-20 and 2026-02-01. Which one do we keep?", opts: ["2026-01-03", "2026-03-20", "2026-02-01"], a: 1,
+          why: "The latest update has the freshest details." },
+        { t: "mcq", q: "In Python, what is \"2026-03-20\" > \"2026-02-01\"?", opts: ["True", "False", "An error"], a: 0,
+          why: "Text compares character by character. With YYYY-MM-DD dates that matches calendar order, which is why pipelines standardize dates to this format." },
+        { t: "mcq", q: "Another export writes dates as 12/01/2025 and 03/20/2026. Comparing them as text says December 2025 is newer. Why?", opts: ["Text compares character by character, and \"1\" comes after \"0\"", "Python can't compare dates", "December is later in the year"], a: 0,
+          why: "Convert dates to YYYY-MM-DD (or real date objects) before comparing. A classic cleaning step." },
+        { t: "fill", q: "Keep a row if it's the first for that email, or newer than the one stored.", code: `if key not in latest [[0]] row["updated_at"] [[1]] latest[key]["updated_at"]:
+    latest[key] = row`, blanks: ["or", ">"], extra: ["and", "<"],
+          why: "\"or\" because either condition is enough. \">\" because a bigger date string is newer." },
+      ] },
+  ],
+});
+
+/* ============ 3. QUERY QUARRY ============ */
+const PRODUCTS_TABLE = { cols: ["product_id", "name", "category", "price"], rows: [
+  ["1", "Trail Daypack", "Outdoor", "64.00"],
+  ["2", "Camp Stove", "Outdoor", "89.50"],
+  ["3", "Desk Lamp", "Home", "27.90"],
+  ["4", "Wireless Earbuds", "Electronics", "79.99"],
+  ["5", "Insulated Bottle", "Outdoor", "18.75"],
+] };
+const ORDERS_DB = { cols: ["order_id", "customer_id", "order_date", "status", "total"], rows: [
+  ["101", "2", "2026-01-04", "completed", "120.00"],
+  ["102", "1", "2026-01-19", "completed", "80.00"],
+  ["103", "1", "2026-01-22", "cancelled", "50.00"],
+  ["104", "3", "2026-02-02", "completed", "200.00"],
+  ["105", "2", "2026-02-14", "completed", "40.00"],
+  ["106", "3", "2026-02-20", "pending", "75.00"],
+] };
+const CUSTOMERS_DB = { cols: ["customer_id", "name", "city"], rows: [
+  ["1", "Ava Reyes", "Austin"], ["2", "Liam Patel", "Denver"], ["3", "Maya Kim", "Seattle"], ["4", "Jade Brooks", "Austin"],
+] };
+ISLANDS.push({
+  id: "sql", name: "Query Quarry", kind: "quarry",
+  project: "SQL queries that analyze a sales database",
+  file: "sales_analysis.sql", lang: "sql",
+  brief: "Monday, 9 a.m. The CEO wants answers for the sales meeting: which products are premium, how much we made each month, who our best customers are, and who we're losing. The answers are in our PostgreSQL database.",
+  goal: "Write the four queries that answer the CEO's questions.",
+  head: `-- sales_analysis.sql
+-- Answers for the Monday sales meeting at Harbor Goods (PostgreSQL).`,
+  foot: "",
+  levels: [
+    { id: "sql1", name: "Ask a table a question", part: "SELECT",
+      piece: `-- 1. Which products cost more than $50?
+SELECT name, price
+FROM products
+WHERE price > 50
+ORDER BY price DESC;`,
+      cards: [
+        { t: "story", say: "A database table is like a spreadsheet tab: columns across the top, one row per thing. SQL is how you ask it questions. Here's our products table.", show: { table: PRODUCTS_TABLE } },
+        { t: "match", q: "Match each SQL clause to its job.", pairs: [
+            ["SELECT", "Which columns to show"],
+            ["FROM", "Which table to read"],
+            ["WHERE", "Which rows to keep"],
+            ["ORDER BY", "How to sort the result"]],
+          why: "Almost every query you'll ever write starts with these four." },
+        { t: "fill", q: "Show the name and price of products over $50, most expensive first.", code: `[[0]] name, price
+[[1]] products
+[[2]] price > 50
+ORDER BY price [[3]];`, blanks: ["SELECT", "FROM", "WHERE", "DESC"], extra: ["ASC", "GROUP BY"],
+          why: "DESC means descending: biggest first. ASC (the default) is smallest first." },
+        { t: "mcq", q: "How many rows does that query return from this table?", table: PRODUCTS_TABLE, opts: ["2", "3", "5"], a: 1,
+          why: "Daypack (64.00), Camp Stove (89.50) and Earbuds (79.99) are over 50." },
+        { t: "mcq", q: "Which filter finds only Outdoor products?", opts: ["WHERE category = Outdoor", "WHERE category = 'Outdoor'", "WHERE 'category' = Outdoor"], a: 1,
+          why: "Text values go in single quotes. Without them, SQL thinks Outdoor is a column name." },
+      ] },
+    { id: "sql2", name: "Totals with GROUP BY", part: "GROUP BY",
+      piece: `-- 2. Revenue per month (completed orders only)
+SELECT DATE_TRUNC('month', order_date) AS month,
+       SUM(total) AS revenue
+FROM orders
+WHERE status = 'completed'
+GROUP BY month
+ORDER BY month;`,
+      cards: [
+        { t: "story", say: "\"How much did we make each month?\" You don't want 4,000 order rows; you want 12 numbers. GROUP BY puts rows into buckets (one per month), and SUM adds up each bucket.", show: { table: ORDERS_DB } },
+        { t: "mcq", q: "Counting completed orders only, what was January's revenue?", table: ORDERS_DB, opts: ["200.00", "250.00", "120.00"], a: 0,
+          why: "Orders 101 (120.00) and 102 (80.00). Order 103 was cancelled, so it doesn't count." },
+        { t: "order", q: "Put the clauses in the order SQL requires.", code: true, items: ["SELECT DATE_TRUNC('month', order_date) AS month, SUM(total)", "FROM orders", "WHERE status = 'completed'", "GROUP BY month", "ORDER BY month"],
+          why: "SELECT, FROM, WHERE, GROUP BY, ORDER BY. Memorize this order; it never changes." },
+        { t: "fill", q: "Finish the monthly revenue query.", code: `SELECT DATE_TRUNC('month', order_date) AS month,
+       [[0]](total) AS revenue
+FROM orders
+WHERE status = 'completed'
+[[1]] month
+ORDER BY month;`, blanks: ["SUM", "GROUP BY"], extra: ["COUNT", "AVG", "HAVING"],
+          why: "SUM adds the totals; COUNT would count orders instead. DATE_TRUNC('month', ...) turns every date into the first day of its month." },
+        { t: "mcq", q: "Why filter on status = 'completed'?", opts: ["Cancelled and pending orders aren't real revenue; counting them overstates sales", "SQL requires a WHERE", "To make it run faster"], a: 0,
+          why: "Knowing which rows count is business logic. Always ask what \"revenue\" means before writing the query." },
+      ] },
+    { id: "sql3", name: "Connect tables with JOIN", part: "JOIN",
+      piece: `-- 3. Top 5 customers by total spend
+SELECT c.name,
+       COUNT(o.order_id) AS orders,
+       SUM(o.total) AS spend
+FROM customers c
+JOIN orders o ON o.customer_id = c.customer_id
+WHERE o.status = 'completed'
+GROUP BY c.customer_id, c.name
+ORDER BY spend DESC
+LIMIT 5;`,
+      cards: [
+        { t: "story", say: "\"Who are our best customers?\" The orders table only has customer_id numbers, not names. Names live in the customers table. A JOIN matches rows from both tables by that id and puts them side by side.", show: { table: CUSTOMERS_DB } },
+        { t: "match", q: "Do a join by hand: match each order to its customer using customer_id.", pairs: [
+            ["Order 101 · customer_id 2", "Liam Patel"],
+            ["Order 102 · customer_id 1", "Ava Reyes"],
+            ["Order 104 · customer_id 3", "Maya Kim"]],
+          why: "That's exactly what JOIN ... ON o.customer_id = c.customer_id does, for every row at once." },
+        { t: "fill", q: "Finish the top-customers query.", code: `SELECT c.name, SUM(o.total) AS spend
+FROM customers c
+[[0]] orders o [[1]] o.customer_id = c.[[2]]
+WHERE o.status = 'completed'
+GROUP BY c.customer_id, c.name
+ORDER BY spend DESC
+[[3]] 5;`, blanks: ["JOIN", "ON", "customer_id", "LIMIT"], extra: ["WHERE", "order_id", "TOP"],
+          why: "JOIN brings in the second table, ON says which columns match, LIMIT keeps the top 5. (SQL Server writes TOP 5 instead.)" },
+        { t: "mcq", q: "Jade (customer 4) has never ordered. With a plain JOIN, is she in the result?", table: CUSTOMERS_DB, opts: ["Yes, with spend 0", "No: a JOIN only keeps rows that match in both tables", "Yes, with spend NULL"], a: 1,
+          why: "A plain (INNER) JOIN drops unmatched rows. To keep her you need a LEFT JOIN, which is next." },
+      ] },
+    { id: "sql4", name: "The win-back list", part: "LEFT JOIN + HAVING",
+      piece: `-- 4. Customers with no completed order in 90 days (win-back list)
+SELECT c.name, MAX(o.order_date) AS last_order
+FROM customers c
+LEFT JOIN orders o
+  ON o.customer_id = c.customer_id
+ AND o.status = 'completed'
+GROUP BY c.customer_id, c.name
+HAVING MAX(o.order_date) < CURRENT_DATE - INTERVAL '90 days'
+    OR MAX(o.order_date) IS NULL;`,
+      cards: [
+        { t: "story", say: "Marketing wants to email customers who haven't bought anything in 90 days, including people who never bought at all. That needs two new tools: LEFT JOIN keeps every customer, and HAVING filters after grouping." },
+        { t: "mcq", q: "Which join keeps customers who have zero orders?", opts: ["JOIN (inner)", "customers LEFT JOIN orders", "No join needed"], a: 1,
+          why: "LEFT JOIN keeps every row from the left table. Customers with no orders get NULLs in the order columns." },
+        { t: "bug", q: "This query errors. Tap the line that's in the wrong place.", code: true, lines: ["SELECT c.name, MAX(o.order_date) AS last_order", "FROM customers c", "LEFT JOIN orders o ON o.customer_id = c.customer_id", "WHERE MAX(o.order_date) < CURRENT_DATE - INTERVAL '90 days'", "GROUP BY c.customer_id, c.name;"], a: 3,
+          fix: "HAVING MAX(o.order_date) < CURRENT_DATE - INTERVAL '90 days'   -- after GROUP BY",
+          why: "WHERE runs before rows are grouped, so MAX() doesn't exist yet. Conditions on totals go in HAVING, after GROUP BY." },
+        { t: "mcq", q: "For a customer who never ordered, what is MAX(o.order_date)?", opts: ["0", "NULL", "Today's date"], a: 1,
+          why: "There's nothing to take the max of, so it's NULL. That's why the final query adds OR MAX(o.order_date) IS NULL." },
+        { t: "match", q: "Match each request to the SQL tool for it.", pairs: [
+            ["Only completed orders", "WHERE"],
+            ["Only customers with 3+ orders", "HAVING"],
+            ["Include customers with no orders", "LEFT JOIN"],
+            ["Just the top 5", "ORDER BY + LIMIT"]],
+          why: "Picking the right tool for each request is most of SQL interviewing." },
+      ] },
+  ],
+});
+
+/* ============ 4. RELATION REEF ============ */
+const BIG_SHEET = { cols: ["order", "customer", "email", "city", "product", "price"], rows: [
+  ["101", "Ava Reyes", "ava@mail.com", "Austin", "Camp Stove", "89.50"],
+  ["102", "Ava Reyes", "ava@mail.com", "Denver", "Desk Lamp", "27.90"],
+  ["103", "Liam Patel", "liam@mail.com", "Denver", "Camp Stove", "89.50"],
+  ["104", "Ava Reyes", "ava.r@new.com", "Denver", "Trail Daypack", "64.00"],
+] };
+ISLANDS.push({
+  id: "reef", name: "Relation Reef", kind: "reef",
+  project: "Database with multiple related tables and queries",
+  file: "schema.sql", lang: "sql",
+  brief: "Harbor Goods started with one giant spreadsheet: every order row repeats the customer's name, email and city. Ava moved to Denver and changed her email, but only some rows got updated. Now two reports disagree about where Ava lives.",
+  goal: "Design a PostgreSQL database where every fact is stored once, linked together with keys.",
+  head: `-- schema.sql
+-- Harbor Goods database: four related tables (PostgreSQL).`,
+  foot: "",
+  levels: [
+    { id: "reef1", name: "One big messy sheet", part: "The problem",
+      piece: `-- Why four tables? Each fact is stored once.
+-- A customer's email lives only in customers,
+-- so updating it in one place fixes every order.`,
+      cards: [
+        { t: "story", say: "Here's part of the big sheet. Ava's latest details are ava.r@new.com in Denver.", show: { table: BIG_SHEET } },
+        { t: "flag", q: "Tap the rows that disagree with Ava's latest details.", table: BIG_SHEET, bad: [0, 1],
+          why: "Row 101 has the old email and old city; row 102 has the old email. Same fact, stored many times, drifting apart." },
+        { t: "mcq", q: "What's the root cause?", opts: ["Ava typed it wrong", "The same fact is stored in many rows, so one change must be made in many places", "Spreadsheets can't store emails"], a: 1,
+          why: "This is called an update anomaly. It's the main reason databases split data into related tables (normalization)." },
+        { t: "mcq", q: "What's the fix?", opts: ["Put customers in their own table, once each, and have orders point to them by id", "Add more columns", "Delete old orders"], a: 0,
+          why: "Store each customer once. Orders just say \"customer 1\", so changing Ava's email in one row fixes every report." },
+      ] },
+    { id: "reef2", name: "Design the tables", part: "Tables",
+      piece: `CREATE TABLE customers (
+    customer_id SERIAL PRIMARY KEY,
+    name        TEXT NOT NULL,
+    email       TEXT NOT NULL UNIQUE,
+    city        TEXT
+);
+
+CREATE TABLE products (
+    product_id SERIAL PRIMARY KEY,
+    name       TEXT NOT NULL,
+    category   TEXT NOT NULL,
+    price      NUMERIC(10, 2) NOT NULL CHECK (price >= 0)
+);`,
+      cards: [
+        { t: "story", say: "Split the sheet by kind of thing: customers, products, orders, and order_items (which products are in which order, and how many). One table per kind of thing." },
+        { t: "match", q: "Which table should each column live in?", pairs: [
+            ["email", "customers"], ["price", "products"], ["order_date", "orders"], ["quantity", "order_items"]],
+          why: "Ask: what is this a fact about? An email describes a customer, a price describes a product, a date describes an order." },
+        { t: "mcq", q: "What is a primary key?", opts: ["The first column", "A column whose value uniquely identifies each row and is never empty", "A password for the table"], a: 1,
+          why: "customer_id 1 always means Ava, and no other row can have 1." },
+        { t: "fill", q: "Create the customers table.", code: `CREATE TABLE customers (
+    customer_id SERIAL [[0]] [[1]],
+    name        TEXT NOT NULL,
+    email       TEXT NOT NULL [[2]],
+    city        TEXT
+);`, blanks: ["PRIMARY", "KEY", "UNIQUE"], extra: ["FOREIGN", "NULL"],
+          why: "SERIAL numbers new rows automatically. UNIQUE on email stops the Duplicate Dunes problem at the door." },
+        { t: "mcq", q: "price NUMERIC(10, 2) CHECK (price >= 0). What does the CHECK do?", opts: ["Formats the price", "Rejects any row with a negative price", "Rounds the price"], a: 1,
+          why: "Rules in the table are data validation the database enforces for you, no matter which program inserts the data." },
+      ] },
+    { id: "reef3", name: "Link them with keys", part: "Keys",
+      piece: `CREATE TABLE orders (
+    order_id    SERIAL PRIMARY KEY,
+    customer_id INT NOT NULL REFERENCES customers(customer_id),
+    order_date  DATE NOT NULL,
+    status      TEXT NOT NULL
+);
+
+CREATE TABLE order_items (
+    order_id   INT NOT NULL REFERENCES orders(order_id),
+    product_id INT NOT NULL REFERENCES products(product_id),
+    quantity   INT NOT NULL CHECK (quantity > 0),
+    unit_price NUMERIC(10, 2) NOT NULL,
+    PRIMARY KEY (order_id, product_id)
+);`,
+      cards: [
+        { t: "story", say: "An order has to say which customer placed it. A foreign key (REFERENCES) is a column that must match an existing row in another table, so nobody can create an order for customer 999 who doesn't exist." },
+        { t: "fill", q: "Link orders to customers.", code: `CREATE TABLE orders (
+    order_id    SERIAL PRIMARY KEY,
+    customer_id INT NOT NULL [[0]] customers([[1]]),
+    order_date  DATE NOT NULL,
+    status      TEXT NOT NULL
+);`, blanks: ["REFERENCES", "customer_id"], extra: ["PRIMARY KEY", "order_id"],
+          why: "REFERENCES customers(customer_id) means: this value must exist in the customers table." },
+        { t: "order", q: "Create these three tables in an order that works.", items: ["customers", "orders", "order_items"],
+          why: "A table can only point at tables that already exist: orders needs customers, order_items needs orders." },
+        { t: "mcq", q: "Someone tries to insert an order for customer 999, who doesn't exist. What happens?", opts: ["It works; customer_id is just a number", "PostgreSQL rejects it with a foreign key error", "It creates customer 999"], a: 1,
+          why: "The database protects itself. Orphan rows can't sneak in." },
+        { t: "mcq", q: "order_items has PRIMARY KEY (order_id, product_id). What does that prevent?", opts: ["The same product listed twice in one order (use quantity instead)", "Orders with more than one product", "Products ever being sold twice"], a: 0,
+          why: "A key can be two columns together. Each product appears at most once per order." },
+      ] },
+    { id: "reef4", name: "Ask across tables", part: "Query",
+      piece: `-- Who bought what, and when?
+SELECT c.name, o.order_date, p.name AS product, oi.quantity
+FROM customers c
+JOIN orders o       ON o.customer_id = c.customer_id
+JOIN order_items oi ON oi.order_id = o.order_id
+JOIN products p     ON p.product_id = oi.product_id
+ORDER BY o.order_date;`,
+      cards: [
+        { t: "story", say: "The payoff: because everything is linked by ids, one query can walk from customers to orders to items to products and answer \"who bought what, and when?\"" },
+        { t: "match", q: "Match each pair of tables to their relationship.", pairs: [
+            ["customers → orders", "One customer, many orders"],
+            ["orders → order_items", "One order, many line items"],
+            ["products → order_items", "One product, in many line items"]],
+          why: "These \"one-to-many\" links are what the foreign keys describe. Interviewers love asking you to draw them." },
+        { t: "order", q: "Order the joins to walk from customers to products.", code: true, items: ["FROM customers c", "JOIN orders o ON o.customer_id = c.customer_id", "JOIN order_items oi ON oi.order_id = o.order_id", "JOIN products p ON p.product_id = oi.product_id"],
+          why: "Each JOIN follows one key to the next table, like stepping stones." },
+        { t: "mcq", q: "Ava changes her email again. With the new design, how many rows do you update?", opts: ["One: her row in customers", "One per order she placed", "Every row in every table"], a: 0,
+          why: "That's the whole point of the redesign. Problem from the start of the island: solved." },
+      ] },
+  ],
+});
+
+/* ============ 5. API PEAK ============ */
+const WX = {
+  Austin: { lat: 30.27, lon: -97.74, temp: [24.1, 22.8], rain: [0.0, 12.4] },
+  Denver: { lat: 39.74, lon: -104.99, temp: [9.3, 4.1], rain: [0.0, 0.6] },
+  Seattle: { lat: 47.61, lon: -122.33, temp: [11.2, 10.4], rain: [8.9, 15.2] },
+};
+const AUSTIN_JSON = `{
+  "latitude": 30.27,
+  "longitude": -97.74,
+  "daily": {
+    "time": ["2026-11-09", "2026-11-10"],
+    "temperature_2m_max": [24.1, 22.8],
+    "precipitation_sum": [0.0, 12.4]
+  }
+}`;
+ISLANDS.push({
+  id: "api", name: "API Peak", kind: "peak",
+  project: "Python program that pulls information from an API",
+  file: "fetch_weather.py", lang: "python",
+  brief: "Storms delay our deliveries. Operations wants tomorrow's forecast for every warehouse city each morning, and nobody wants to check a weather site by hand. The free Open-Meteo weather API can answer this for a program.",
+  goal: "Write a program that asks the weather API for each city, reads the answer, and survives when the API has a bad day.",
+  head: `"""fetch_weather.py
+Pulls the forecast for each warehouse city from the free Open-Meteo API.
+"""
+import time
+
+import requests
+
+API_URL = "https://api.open-meteo.com/v1/forecast"
+WAREHOUSES = {
+    "Austin": (30.27, -97.74),
+    "Denver": (39.74, -104.99),
+    "Seattle": (47.61, -122.33),
+}`,
+  foot: `if __name__ == "__main__":
+    all_rows = []
+    for city, (lat, lon) in WAREHOUSES.items():
+        data = get_forecast_with_retry(lat, lon)
+        all_rows.extend(to_rows(city, data))
+    for row in all_rows:
+        if row["rain_mm"] > 10:
+            print(f"Heavy rain expected in {row['city']} on {row['date']}")`,
+  levels: [
+    { id: "api1", name: "What's an API?", part: "The idea",
+      piece: `# An API is a URL that returns data instead of a web page.
+# We send: latitude, longitude and which daily fields we want.
+# We get back JSON with lists of values, one per day.`,
+      cards: [
+        { t: "story", say: "An API is like a restaurant counter for programs. You place an order in an agreed format (the request), and the kitchen hands back exactly what you asked for (the response), usually as JSON text. You never see the kitchen.", show: { code: "https://api.open-meteo.com/v1/forecast?latitude=30.27&longitude=-97.74" } },
+        { t: "match", q: "Match each API word to its meaning.", pairs: [
+            ["Endpoint", "The URL you send requests to"],
+            ["Parameters", "Details you send, like latitude=30.27"],
+            ["JSON", "The text format the data comes back in"],
+            ["Status code", "A number saying how it went, like 200"]],
+          why: "These four words come up in every API conversation." },
+        { t: "mcq", q: "In that URL, which part are the parameters?", opts: ["https://api.open-meteo.com", "/v1/forecast", "latitude=30.27&longitude=-97.74"], a: 2,
+          why: "Everything after the ? is parameters, joined with &." },
+        { t: "match", q: "Match each status code to what happened.", pairs: [
+            ["200", "Success, here's your data"],
+            ["404", "Not found: wrong URL"],
+            ["429", "Too many requests: slow down"],
+            ["500", "Server error: their problem, try later"]],
+          why: "2xx means it worked, 4xx means your request had a problem, 5xx means the server had one." },
+      ] },
+    { id: "api2", name: "Make the request", part: "Request",
+      piece: `def get_forecast(lat, lon):
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "daily": "temperature_2m_max,precipitation_sum",
+        "timezone": "auto",
+    }
+    response = requests.get(API_URL, params=params, timeout=10)
+    response.raise_for_status()
+    return response.json()`,
+      cards: [
+        { t: "api", q: "Try it: pick a warehouse city and send a request. Watch what comes back." },
+        { t: "fill", q: "Make the request in Python with the requests library.", code: `import requests
+
+response = requests.[[0]](API_URL, [[1]]=params, timeout=10)
+response.[[2]]()
+data = response.[[3]]()`, blanks: ["get", "params", "raise_for_status", "json"], extra: ["post", "text", "data"],
+          why: "GET asks for data. params becomes the ?latitude=... part. raise_for_status() turns error codes into Python errors. .json() turns the text into dicts and lists." },
+        { t: "mcq", q: "Why pass timeout=10?", opts: ["Waits 10 seconds before sending", "Gives up after 10 seconds instead of hanging forever if the server never answers", "Asks for 10 results"], a: 1,
+          why: "Without a timeout, one stuck request can freeze a 6 a.m. job until someone notices." },
+        { t: "mcq", q: "The API returns 404. What does raise_for_status() do?", opts: ["Nothing", "Raises an error so the problem can't be silently ignored", "Retries automatically"], a: 1,
+          why: "Failing loudly beats quietly continuing with no data." },
+      ] },
+    { id: "api3", name: "Read the JSON", part: "Parse",
+      piece: `def to_rows(city, data):
+    daily = data["daily"]
+    rows = []
+    for day, temp, rain in zip(daily["time"], daily["temperature_2m_max"], daily["precipitation_sum"]):
+        rows.append({"city": city, "date": day, "max_temp_c": temp, "rain_mm": rain})
+    return rows`,
+      cards: [
+        { t: "story", say: "JSON maps straight onto Python: { } becomes a dict and [ ] becomes a list. You reach inside with keys and positions. Here's Austin's response stored in a variable called data.", show: { code: AUSTIN_JSON } },
+        { t: "mcq", q: "What is data[\"daily\"][\"precipitation_sum\"][1]?", code: AUSTIN_JSON, opts: ["0.0", "12.4", "\"2026-11-10\""], a: 1,
+          why: "Go into \"daily\", then \"precipitation_sum\", then position 1 (positions start at 0)." },
+        { t: "match", q: "Match each Python expression to its value.", pairs: [
+            ["data[\"latitude\"]", "30.27"],
+            ["data[\"daily\"][\"time\"][0]", "\"2026-11-09\""],
+            ["data[\"daily\"][\"temperature_2m_max\"][1]", "22.8"],
+            ["len(data[\"daily\"][\"time\"])", "2"]],
+          why: "Read paths left to right: one key or position at a time." },
+        { t: "fill", q: "Turn the parallel lists into one row per day.", code: `daily = data["daily"]
+for day, temp, rain in [[0]](daily["time"], daily["temperature_2m_max"], daily["precipitation_sum"]):
+    rows.[[1]]({"city": city, "date": day, "max_temp_c": temp, "rain_mm": rain})`, blanks: ["zip", "append"], extra: ["range", "extend", "enumerate"],
+          why: "zip walks the three lists side by side, giving one day's date, temperature and rain together." },
+        { t: "mcq", q: "Why reshape nested JSON into flat rows?", opts: ["Flat rows load straight into a database table or CSV", "JSON is not allowed in databases", "It makes the data bigger"], a: 0,
+          why: "Tables are rows and columns. This reshaping step is called flattening, and it's in almost every API pipeline." },
+      ] },
+    { id: "api4", name: "When the API fails", part: "Retry",
+      piece: `def get_forecast_with_retry(lat, lon, attempts=3):
+    for attempt in range(1, attempts + 1):
+        try:
+            return get_forecast(lat, lon)
+        except requests.RequestException as error:
+            print(f"Attempt {attempt} failed: {error}")
+            if attempt == attempts:
+                raise
+            time.sleep(2 ** attempt)`,
+      cards: [
+        { t: "story", say: "APIs fail: networks drop, servers restart, rate limits kick in. At 6 a.m. with nobody watching, your program should retry a few times, waiting a bit longer each time, and only then give up loudly." },
+        { t: "mcq", q: "Which failures are worth retrying?", opts: ["404 Not Found", "500 Server Error or a timeout", "400 Bad Request"], a: 1,
+          why: "500s and timeouts are often temporary. 4xx errors mean your request is wrong, so retrying the same thing won't help." },
+        { t: "fill", q: "Finish the retry loop.", code: `for attempt in range(1, attempts + 1):
+    [[0]]:
+        return get_forecast(lat, lon)
+    except requests.RequestException as error:
+        if attempt == attempts:
+            [[1]]
+        time.[[2]](2 ** attempt)`, blanks: ["try", "raise", "sleep"], extra: ["pass", "wait", "continue"],
+          why: "On the last attempt, raise re-throws the error so the failure is visible. Otherwise, sleep and try again." },
+        { t: "mcq", q: "With 3 attempts, how long does it wait after attempts 1 and 2?", opts: ["2 then 4 seconds", "1 then 2 seconds", "2 then 2 seconds"], a: 0,
+          why: "2 ** 1 = 2 and 2 ** 2 = 4. Waiting longer each time is called exponential backoff." },
+        { t: "bug", q: "This program sometimes freezes for hours. Tap the line to fix.", lines: ["def get_forecast(lat, lon):", "    response = requests.get(API_URL, params={\"latitude\": lat, \"longitude\": lon})", "    response.raise_for_status()", "    return response.json()"], a: 1,
+          fix: "    response = requests.get(API_URL, params={...}, timeout=10)",
+          why: "No timeout means requests waits forever if the server never answers." },
+      ] },
+  ],
+});
+
+/* ============ 6. PIPELINE VOLCANO ============ */
+const INCOMING = { cols: ["order_id", "email", "city", "amount"], rows: [
+  ["A-17", "ava@mail.com", "austin", "120.50"],
+  ["", "liam@mail.com", "Denver", "35.00"],
+  ["A-19", "maya.mail.com", "Seattle", "18.25"],
+  ["A-20", "jade@mail.com", "Austin", "-40.00"],
+  ["A-21", "omar@mail.com", "denver ", "abc"],
+] };
+ISLANDS.push({
+  id: "volcano", name: "Pipeline Volcano", kind: "volcano",
+  project: "End-to-end pipeline: API → validation → PostgreSQL",
+  file: "pipeline.py", lang: "python",
+  brief: "The big one. The shop's new system has an orders API, and leadership wants a nightly pipeline: pull the orders, check them, clean them, load them into PostgreSQL, and have the sales report ready by 7 a.m. If anything breaks, it must say so loudly.",
+  goal: "Connect everything you built on the other islands into one pipeline that runs on its own.",
+  head: `"""pipeline.py
+Nightly pipeline: pull orders from the shop API, validate and clean them,
+load them into PostgreSQL, and log what happened.
+"""
+import logging
+import os
+
+import psycopg2
+import requests
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+log = logging.getLogger("pipeline")
+ORDERS_URL = "https://shop.example.com/api/orders"`,
+  foot: `if __name__ == "__main__":
+    main()`,
+  levels: [
+    { id: "volcano1", name: "See the whole pipeline", part: "The map",
+      piece: `# extract   -> GET orders from the shop API          (API Peak)
+# validate  -> reject records that break the rules   (this island)
+# transform -> clean cities, emails and amounts      (CSV Cove)
+# load      -> insert into PostgreSQL                (Relation Reef)
+# report    -> SQL answers for the business          (Query Quarry)`,
+      cards: [
+        { t: "story", say: "Every island so far built one skill. A real data engineering job connects them: data flows from a source, gets checked and cleaned, lands in a database, and feeds reports. That flow is a pipeline, and this is ETL: Extract, Transform, Load." },
+        { t: "order", q: "Put the pipeline stages in order.", items: ["Extract: pull orders from the API", "Validate: reject broken records", "Transform: clean cities and amounts", "Load: insert into PostgreSQL", "Report: run the sales queries"],
+          why: "Check and clean data before it lands in the database that reports read from." },
+        { t: "match", q: "Which island taught you each stage?", pairs: [
+            ["Extract from an API", "API Peak"],
+            ["Clean messy fields", "CSV Cove"],
+            ["Tables to load into", "Relation Reef"],
+            ["Report with SQL", "Query Quarry"]],
+          why: "You already know every piece. This island is about connecting them and making them reliable." },
+        { t: "mcq", q: "Why validate BEFORE loading?", opts: ["Bad rows are much harder to find and remove once they're mixed into the tables reports read", "PostgreSQL can't store text", "To save disk space"], a: 0,
+          why: "Stop bad data at the door. Cleaning up a database after the CEO has seen a wrong number is much worse." },
+      ] },
+    { id: "volcano2", name: "Validate the orders", part: "Validate",
+      piece: `def validate(order):
+    errors = []
+    if not order.get("order_id"):
+        errors.append("missing order_id")
+    if "@" not in str(order.get("email", "")):
+        errors.append("bad email")
+    try:
+        if float(order.get("amount")) < 0:
+            errors.append("negative amount")
+    except (TypeError, ValueError):
+        errors.append("amount is not a number")
+    return errors
+
+
+def split_valid(orders):
+    good, rejected = [], []
+    for order in orders:
+        problems = validate(order)
+        if problems:
+            rejected.append({"order": order, "problems": problems})
+        else:
+            good.append(order)
+    return good, rejected`,
+      cards: [
+        { t: "flag", q: "Tonight's batch from the API. Tap every order that should be rejected.", table: INCOMING, bad: [1, 2, 3, 4],
+          why: "Missing order_id, an email with no @, a negative amount, and an amount that isn't a number. Only A-17 is good. Its lowercase city is fine: cleaning fixes that later." },
+        { t: "match", q: "Match each problem to the rule that catches it.", pairs: [
+            ["order_id is blank", "missing order_id"],
+            ["maya.mail.com", "bad email"],
+            ["-40.00", "negative amount"],
+            ["abc", "amount is not a number"]],
+          why: "Each rule produces a readable message, so whoever investigates knows exactly what was wrong." },
+        { t: "fill", q: "Write the first two rules.", code: `errors = []
+if not order.get("order_id"):
+    errors.[[0]]("missing order_id")
+if "@" [[1]] str(order.get("email", "")):
+    errors.append("bad email")`, blanks: ["append", "not in"], extra: ["in", "add"],
+          why: "Collect every problem in a list instead of stopping at the first, so one log line explains everything wrong with a record." },
+        { t: "mcq", q: "What should happen to rejected orders?", opts: ["Delete them and move on", "Set them aside with their reasons and log them, so someone can fix the source", "Load them anyway"], a: 1,
+          why: "Rejected records are evidence. Teams often keep them in a separate \"quarantine\" table." },
+      ] },
+    { id: "volcano3", name: "Load into PostgreSQL", part: "Load",
+      piece: `def load(conn, orders):
+    with conn.cursor() as cur:
+        for o in orders:
+            cur.execute(
+                """
+                INSERT INTO orders_staging (order_id, email, city, amount)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (order_id) DO NOTHING
+                """,
+                (
+                    o["order_id"],
+                    o["email"].strip().lower(),
+                    o["city"].strip().title(),
+                    float(o["amount"]),
+                ),
+            )
+    conn.commit()`,
+      cards: [
+        { t: "story", say: "psycopg2 is the standard Python library for PostgreSQL. You connect, open a cursor (the thing that runs SQL), execute INSERT statements, and commit. Until you commit, nothing is saved." },
+        { t: "order", q: "Order the steps to save data with psycopg2.", code: true, items: ["conn = psycopg2.connect(...)", "cur = conn.cursor()", "cur.execute(\"INSERT INTO ...\", values)", "conn.commit()", "conn.close()"],
+          why: "Connect, get a cursor, run SQL, commit to save, close when done." },
+        { t: "bug", q: "A customer in O'Fallon crashes this load. Tap the dangerous line.", lines: ["for o in orders:", "    cur.execute(f\"INSERT INTO orders_staging VALUES ('{o['order_id']}', '{o['city']}')\")", "conn.commit()"], a: 1,
+          fix: "    cur.execute(\"INSERT INTO orders_staging VALUES (%s, %s)\", (o[\"order_id\"], o[\"city\"]))",
+          why: "Pasting values into SQL text breaks on quotes like O'Fallon and lets attackers inject SQL. %s placeholders let psycopg2 insert values safely." },
+        { t: "mcq", q: "The pipeline crashes halfway and you rerun it. Without protection, what happens to the orders loaded the first time?", opts: ["They load again, creating duplicates", "PostgreSQL removes them", "Nothing at all"], a: 0,
+          why: "Reruns happen all the time, so loads must be safe to repeat. That property is called idempotency." },
+        { t: "fill", q: "Make the insert safe and safe to rerun.", code: `INSERT INTO orders_staging (order_id, email, city, amount)
+VALUES ([[0]], %s, %s, %s)
+ON [[1]] (order_id) DO [[2]]`, blanks: ["%s", "CONFLICT", "NOTHING"], extra: ["?", "ERROR", "UPDATE"],
+          why: "ON CONFLICT (order_id) DO NOTHING skips orders that are already loaded, so a rerun never duplicates them." },
+      ] },
+    { id: "volcano4", name: "Handle failure like a pro", part: "Run & recover",
+      piece: `def main():
+    response = requests.get(ORDERS_URL, timeout=10)
+    response.raise_for_status()
+    orders = response.json()
+
+    good, rejected = split_valid(orders)
+    log.info("extracted %d orders: %d valid, %d rejected", len(orders), len(good), len(rejected))
+    for r in rejected:
+        log.warning("rejected %s: %s", r["order"].get("order_id"), ", ".join(r["problems"]))
+
+    conn = psycopg2.connect(
+        host=os.environ.get("DB_HOST", "localhost"),
+        dbname="harbor",
+        user="etl",
+        password=os.environ["DB_PASSWORD"],
+    )
+    try:
+        load(conn, good)
+        log.info("loaded %d orders", len(good))
+    except Exception:
+        conn.rollback()
+        log.exception("load failed, nothing was saved")
+        raise
+    finally:
+        conn.close()`,
+      cards: [
+        { t: "story", say: "3 a.m.: the database restarts in the middle of a load. A professional pipeline rolls back the half-finished work, writes a clear log message, closes the connection, and exits with an error so the scheduler can alert someone." },
+        { t: "fill", q: "Protect the load step.", code: `try:
+    load(conn, good)
+except Exception:
+    conn.[[0]]()
+    log.exception("load failed, nothing was saved")
+    [[1]]
+[[2]]:
+    conn.close()`, blanks: ["rollback", "raise", "finally"], extra: ["commit", "pass", "else"],
+          why: "rollback undoes the partial load, raise keeps the failure visible, and finally always runs, so the connection closes either way." },
+        { t: "mcq", q: "Why re-raise the error instead of only logging it?", opts: ["So the job ends as failed and the scheduler (cron or Airflow) can alert someone", "Python requires it", "It deletes the log"], a: 0,
+          why: "A pipeline that fails quietly is the worst kind. Loud failures get fixed." },
+        { t: "mcq", q: "Where should the database password live?", opts: ["Typed into the script", "In an environment variable or secrets manager, never in code you push to GitHub", "In the README"], a: 1,
+          why: "os.environ[\"DB_PASSWORD\"] reads it at run time. Recruiters notice when a portfolio project handles secrets properly." },
+        { t: "order", q: "Put main() in order.", items: ["Extract: get orders from the API", "Validate: split into good and rejected", "Log the counts and every rejection", "Load good orders inside try / except", "Close the connection in finally"],
+          why: "That's your whole pipeline, start to finish. You built every piece." },
+      ] },
+  ],
+});
+
+const RESUME = [
+  { text: "Developed a Python application to retrieve data from a public API.", island: "api" },
+  { text: "Cleaned and transformed raw datasets.", island: "csv" },
+  { text: "Implemented SQL queries to organize and analyze records.", island: "sql" },
+  { text: "Loaded processed data into a PostgreSQL database.", island: "volcano" },
+  { text: "Incorporated error handling and data validation.", island: "volcano" },
+];
+
+</script>
+<script>
+(function () {
+"use strict";
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const app = () => $("#app");
+
+/* ---------------- progress ---------------- */
+const KEY = "data-islands-v1";
+let P = { done: {} };
+try { const raw = localStorage.getItem(KEY); if (raw) P = Object.assign(P, JSON.parse(raw)); } catch (e) { /* no storage */ }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) { /* ignore */ } }
+
+const ISL = {}; ISLANDS.forEach((isl, i) => { isl.index = i; ISL[isl.id] = isl; isl.levels.forEach((l, j) => { l.index = j; l.island = isl; }); });
+const LEVEL = {}; ISLANDS.forEach(isl => isl.levels.forEach(l => { LEVEL[l.id] = l; }));
+const levelDone = l => !!P.done[l.id];
+const islandDone = isl => isl.levels.every(levelDone);
+const islandOpen = isl => isl.index === 0 || islandDone(ISLANDS[isl.index - 1]);
+const levelOpen = l => islandOpen(l.island) && (l.index === 0 || levelDone(l.island.levels[l.index - 1]));
+const crystals = () => Object.keys(P.done).filter(k => LEVEL[k]).length;
+const gems = () => Object.keys(P.done).filter(k => LEVEL[k] && P.done[k].gem).length;
+const TOTAL = ISLANDS.reduce((a, i) => a + i.levels.length, 0);
+function currentIsland() { return ISLANDS.find(i => islandOpen(i) && !islandDone(i)) || ISLANDS[ISLANDS.length - 1]; }
+
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+let toastT;
+function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2200); }
+async function copy(text, pre) {
+  try { await navigator.clipboard.writeText(text); toast("Copied"); }
+  catch (e) { if (pre) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } toast("Selected. Press Ctrl+C or Cmd+C to copy."); }
+}
+
+/* ---------------- little SVG pieces ---------------- */
+const crystalSvg = (on, size) => '<svg class="crys' + (on ? " on" : "") + '" width="' + (size || 18) + '" height="' + (size || 18) + '" viewBox="0 0 20 24" aria-hidden="true"><path d="M10 1 L18 9 L10 23 L2 9 Z"/><path class="facet" d="M10 1 L13 9 L10 23 L7 9 Z"/></svg>';
+const gemSvg = (on, size) => '<svg class="gem' + (on ? " on" : "") + '" width="' + (size || 16) + '" height="' + (size || 16) + '" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2 H15 L19 7 L10 18 L1 7 Z"/></svg>';
+const heartSvg = on => '<svg class="heart' + (on ? " on" : "") + '" width="24" height="22" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 21 C4 15 1 11 1 7 A5.5 5.5 0 0 1 12 4 A5.5 5.5 0 0 1 23 7 C23 11 20 15 12 21 Z"/></svg>';
+const mayaHtml = '<span class="maya" aria-hidden="true">M</span>';
+
+/* ---------------- world map ---------------- */
+function blob(cx, cy, rx, ry, seed, wob) {
+  const r = rng(seed), n = 11, pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2, k = 1 - wob + r() * wob * 2;
+    pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]);
+  }
+  let d = "";
+  for (let i = 0; i < n; i++) {
+    const p = pts[i], q = pts[(i + 1) % n], m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+    d += (i === 0 ? "M" + ((pts[n - 1][0] + p[0]) / 2).toFixed(1) + " " + ((pts[n - 1][1] + p[1]) / 2).toFixed(1) : "") + " Q" + p[0].toFixed(1) + " " + p[1].toFixed(1) + " " + m[0].toFixed(1) + " " + m[1].toFixed(1);
+  }
+  return d + "Z";
+}
+function palm(x, y, s) {
+  return '<g transform="translate(' + x + " " + y + ") scale(" + s + ')"><path d="M0 0 Q4 -18 1 -34" stroke="#8a5a2b" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+    '<path d="M1 -34 Q-14 -40 -22 -30 Q-12 -36 1 -32 Q-6 -46 -16 -48 Q-2 -46 2 -34 Q10 -48 22 -44 Q10 -42 3 -33 Q18 -36 22 -24 Q12 -34 1 -33Z" fill="#2f9e44" stroke="#1b6d2f" stroke-width="1.5"/></g>';
+}
+function emblem(isl, x, y) {
+  const k = isl.kind;
+  if (k === "cove") return '<path d="' + blob(x, y - 6, 56, 30, 7, .22) + '" fill="#2f9e44"/>' + palm(x - 18, y - 4, 1) + palm(x + 22, y + 2, .8) +
+    '<rect x="' + (x + 44) + '" y="' + (y + 8) + '" width="34" height="7" rx="2" fill="#a0693a"/><rect x="' + (x + 50) + '" y="' + (y + 15) + '" width="3" height="10" fill="#7a4d26"/><rect x="' + (x + 70) + '" y="' + (y + 15) + '" width="3" height="10" fill="#7a4d26"/>';
+  if (k === "dunes") return '<path d="M' + (x - 60) + " " + (y + 8) + " Q" + (x - 30) + " " + (y - 30) + " " + x + " " + (y + 4) + '" fill="#e2b45a"/><path d="M' + (x - 10) + " " + (y + 10) + " Q" + (x + 26) + " " + (y - 40) + " " + (x + 62) + " " + (y + 8) + '" fill="#d9a447"/>' +
+    '<path d="M' + (x - 42) + " " + (y - 6) + " q10 -6 20 0" + '" stroke="#c48f35" stroke-width="2" fill="none"/>' + palm(x + 50, y + 12, .6);
+  if (k === "quarry") {
+    let g = '<path d="' + blob(x, y - 6, 56, 32, 21, .18) + '" fill="#8d96a0"/>';
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) g += '<rect x="' + (x - 40 + j * 20) + '" y="' + (y - 26 + i * 13) + '" width="18" height="11" rx="2" fill="' + (i === 0 ? "#c9d1d8" : "#aeb7c0") + '" stroke="#6f7984" stroke-width="1"/>';
+    return g;
+  }
+  if (k === "reef") return '<circle cx="' + (x - 26) + '" cy="' + (y - 4) + '" r="18" fill="#ff8f7a" stroke="#e5604a" stroke-width="2"/><circle cx="' + (x + 24) + '" cy="' + (y - 14) + '" r="15" fill="#ffb199" stroke="#e5604a" stroke-width="2"/><circle cx="' + (x + 18) + '" cy="' + (y + 16) + '" r="13" fill="#ff8f7a" stroke="#e5604a" stroke-width="2"/>' +
+    '<path d="M' + (x - 10) + " " + (y - 6) + " L" + (x + 10) + " " + (y - 12) + " M" + (x + 22) + " " + y + " L" + (x + 20) + " " + (y + 4) + " M" + (x - 10) + " " + (y + 4) + " L" + (x + 6) + " " + (y + 14) + '" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 5"/>';
+  if (k === "peak") return '<path d="' + blob(x, y + 2, 58, 26, 33, .2) + '" fill="#2f9e44"/><path d="M' + (x - 50) + " " + (y + 10) + " L" + (x - 4) + " " + (y - 64) + " L" + (x + 46) + " " + (y + 10) + 'Z" fill="#6c7a89"/><path d="M' + (x - 17) + " " + (y - 43) + " L" + (x - 4) + " " + (y - 64) + " L" + (x + 10) + " " + (y - 42) + " L" + (x + 3) + " " + (y - 46) + " L" + (x - 4) + " " + (y - 38) + " L" + (x - 10) + " " + (y - 46) + 'Z" fill="#fff"/>' +
+    '<line x1="' + (x - 4) + '" y1="' + (y - 64) + '" x2="' + (x - 4) + '" y2="' + (y - 82) + '" stroke="#13222e" stroke-width="2.5"/><path d="M' + (x + 4) + " " + (y - 88) + " a10 10 0 0 1 0 14 M" + (x + 9) + " " + (y - 93) + ' a17 17 0 0 1 0 24" stroke="#ffc23d" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  if (k === "volcano") return '<path d="M' + (x - 62) + " " + (y + 12) + " L" + (x - 14) + " " + (y - 60) + " L" + (x + 16) + " " + (y - 60) + " L" + (x + 64) + " " + (y + 12) + 'Z" fill="#5b3a2e"/><path d="M' + (x - 14) + " " + (y - 60) + " L" + (x + 16) + " " + (y - 60) + " L" + (x + 10) + " " + (y - 50) + " L" + (x + 4) + " " + (y - 32) + " L" + (x - 2) + " " + (y - 46) + " L" + (x - 8) + " " + (y - 40) + 'Z" fill="#ff6a13"/>' +
+    '<g class="smoke"><circle cx="' + (x + 2) + '" cy="' + (y - 74) + '" r="9" fill="#d9dde2"/><circle cx="' + (x + 14) + '" cy="' + (y - 88) + '" r="12" fill="#e8ebee"/><circle cx="' + (x - 6) + '" cy="' + (y - 98) + '" r="8" fill="#f2f4f6"/></g>';
+  return "";
+}
+function avatar(x, y) {
+  return '<g transform="translate(' + x + " " + y + ')"><g class="bob"><ellipse cx="0" cy="22" rx="14" ry="4" fill="rgba(0,0,0,.25)"/>' +
+    '<path d="M-13 4 Q-14 -16 0 -17 Q14 -16 13 4 Q12 18 0 18 Q-12 18 -13 4Z" fill="#ff8a1f" stroke="#13222e" stroke-width="2.5"/>' +
+    '<rect x="-12" y="-9" width="24" height="9" rx="4.5" fill="#13222e"/><circle cx="-5.5" cy="-4.5" r="3.6" fill="#7fe3ff"/><circle cx="5.5" cy="-4.5" r="3.6" fill="#7fe3ff"/>' +
+    '<path d="M-4 7 Q0 10 4 7" stroke="#13222e" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="-17" y="0" width="6" height="12" rx="3" fill="#2f9e44" stroke="#13222e" stroke-width="2"/></g></g>';
+}
+function mapSvg() {
+  const tall = window.innerWidth < 720;
+  const W = tall ? 420 : 1000, H = tall ? 1180 : 640;
+  const pos = tall
+    ? [[130, 1060], [300, 880], [125, 700], [300, 525], [125, 355], [290, 165]]
+    : [[130, 500], [320, 360], [500, 500], [690, 380], [520, 175], [830, 160]];
+  const r = rng(5);
+  let waves = "";
+  for (let i = 0; i < (tall ? 40 : 55); i++) {
+    const x = r() * W, y = r() * H;
+    waves += '<path d="M' + x.toFixed(0) + " " + y.toFixed(0) + ' q6 -5 12 0 q6 5 12 0" stroke="rgba(255,255,255,.22)" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  }
+  let path = "";
+  for (let i = 0; i < pos.length - 1; i++) {
+    const [x1, y1] = pos[i], [x2, y2] = pos[i + 1];
+    const cx = (x1 + x2) / 2 + (tall ? (i % 2 ? -60 : 60) : 0), cy = (y1 + y2) / 2 + (tall ? 0 : (i % 2 ? 50 : -50));
+    const done = islandDone(ISLANDS[i]);
+    path += '<path d="M' + x1 + " " + y1 + " Q" + cx + " " + cy + " " + x2 + " " + y2 + '" class="route' + (done ? " done" : "") + '"/>';
+  }
+  const cur = currentIsland();
+  let isles = "";
+  ISLANDS.forEach((isl, i) => {
+    const [x, y] = pos[i], open = islandOpen(isl), done = islandDone(isl);
+    const nDone = isl.levels.filter(levelDone).length;
+    const label = isl.name;
+    const lw = label.length * 10.5 + 34;
+    isles += '<a href="#island-' + isl.id + '" class="isle' + (open ? "" : " locked") + (done ? " done" : "") + '" aria-label="' + esc(label) + (open ? ", " + nDone + " of " + isl.levels.length + " levels" : ", locked") + '">' +
+      '<g class="isle-body"><ellipse cx="' + x + '" cy="' + (y + 6) + '" rx="104" ry="58" fill="#5fc9d8" opacity=".55"/>' +
+      '<path d="' + blob(x, y, 86, 46, 11 + i * 7, .16) + '" fill="#f3cf7a" stroke="#dba84b" stroke-width="3"/>' + emblem(isl, x, y) + "</g>" +
+      '<g class="isle-label"><rect x="' + (x - lw / 2) + '" y="' + (y + 52) + '" width="' + lw + '" height="30" rx="15" fill="' + (open ? "#13222e" : "#5d6b77") + '"/>' +
+      '<text x="' + x + '" y="' + (y + 73) + '" text-anchor="middle" class="isle-name">' + esc(label) + "</text>" +
+      (open ? isl.levels.map((l, k) => '<path transform="translate(' + (x - 27 + k * 18) + " " + (y + 88) + ')" d="M6 0 L12 6 L6 15 L0 6 Z" class="pip' + (levelDone(l) ? " on" : "") + '"/>').join("") :
+        '<g transform="translate(' + (x - 9) + " " + (y + 88) + ')"><rect x="0" y="7" width="18" height="13" rx="3" fill="#13222e"/><path d="M4 8 V5 A5 5 0 0 1 14 5 V8" stroke="#13222e" stroke-width="3" fill="none"/></g>') +
+      "</g></a>";
+  });
+  const ci = cur.index;
+  const av = avatar(pos[ci][0] + (tall ? 70 : 78), pos[ci][1] - 20);
+  return '<svg class="world" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="World map of six islands"><defs><radialGradient id="sea" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#1585ab"/><stop offset="1" stop-color="#0b3c5d"/></radialGradient></defs>' +
+    '<rect width="' + W + '" height="' + H + '" fill="url(#sea)"/>' + waves + path + isles + av + "</svg>";
+}
+function viewMap() {
+  const cur = currentIsland();
+  const allDone = ISLANDS.every(islandDone);
+  app().innerHTML = '<div class="map-page"><div class="map-top">' +
+    '<div class="brand"><h1>Data Islands</h1><p>Six projects. One job offer.</p></div>' +
+    '<div class="stats"><span class="stat" title="Crystals: one per level">' + crystalSvg(true, 20) + "<b>" + crystals() + "</b>/" + TOTAL + '</span><span class="stat" title="Gems: levels finished without losing a heart">' + gemSvg(true, 18) + "<b>" + gems() + '</b></span><a class="gbtn small sand" href="#portfolio">Portfolio</a></div></div>' +
+    '<div class="map-frame">' + mapSvg() + "</div>" +
+    '<div class="map-cta"><div><span class="eyebrow">' + (allDone ? "Every island cleared" : "Next island") + "</span><b>" + esc(allDone ? "Your portfolio is ready" : cur.name) + "</b><span>" + esc(allDone ? "Six projects, built piece by piece." : cur.project) + "</span></div>" +
+    '<a class="gbtn" href="' + (allDone ? "#portfolio" : "#island-" + cur.id) + '">' + (allDone ? "Open portfolio" : "Sail there") + "</a></div></div>";
+}
+
+/* ---------------- island ---------------- */
+function fileHtml(isl, highlight) {
+  const parts = [];
+  parts.push('<span class="seg dim">' + esc(isl.head) + "</span>");
+  isl.levels.forEach((l, i) => {
+    if (levelDone(l) || l.id === highlight) parts.push('<span class="seg' + (l.id === highlight ? " hot" : highlight ? " dim" : "") + '">' + esc(l.piece) + "</span>");
+    else parts.push('<span class="seg todo">' + (isl.lang === "sql" ? "-- " : "# ") + "Level " + (i + 1) + " builds this part: " + esc(l.part) + "</span>");
+  });
+  if (isl.foot) parts.push('<span class="seg' + (islandDone(isl) ? (highlight ? " dim" : "") : " todo") + '">' + (islandDone(isl) ? esc(isl.foot) : "# Final step: wire it all together (unlocks when every level is done)") + "</span>");
+  return '<div class="file"><div class="file-tab"><span>' + esc(isl.file) + "</span></div><pre class=\"code\">" + parts.join("\n\n\n") + "</pre></div>";
+}
+function viewIsland(id) {
+  const isl = ISL[id];
+  if (!isl) return viewMap();
+  if (!islandOpen(isl)) {
+    app().innerHTML = '<div class="page"><a class="back" href="#map">← World map</a><div class="panel center"><h2>' + esc(isl.name) + ' is locked</h2><p>Finish ' + esc(ISLANDS[isl.index - 1].name) + " first. Each island builds on the one before it.</p><a class=\"gbtn\" href=\"#island-" + ISLANDS[isl.index - 1].id + '">Go there</a></div></div>';
+    return;
+  }
+  const nextLv = isl.levels.find(l => !levelDone(l));
+  const tiles = isl.levels.map((l, i) => {
+    const open = levelOpen(l), done = levelDone(l), next = nextLv && nextLv.id === l.id;
+    return (i ? '<span class="arrow" aria-hidden="true"></span>' : "") +
+      '<a class="stage' + (done ? " done" : "") + (next ? " next" : "") + (open ? "" : " locked") + '" href="' + (open ? "#play-" + l.id : "#island-" + isl.id) + '"' + (open ? "" : ' aria-disabled="true"') + ">" +
+      '<span class="stage-n">' + (i + 1) + '</span><span class="stage-part">' + esc(l.part) + '</span><span class="stage-name">' + esc(l.name) + "</span>" +
+      '<span class="stage-foot">' + (done ? crystalSvg(true) + (P.done[l.id].gem ? gemSvg(true) : "") + "<em>Replay</em>" : next ? "<em>Play</em>" : "<em>Locked</em>") + "</span></a>";
+  }).join("");
+  const done = islandDone(isl);
+  app().innerHTML = '<div class="page isle-page k-' + isl.kind + '"><a class="back" href="#map">← World map</a>' +
+    '<header class="isle-head"><span class="eyebrow">Island ' + (isl.index + 1) + " of " + ISLANDS.length + "</span><h1>" + esc(isl.name) + '</h1><p class="proj">Project: ' + esc(isl.project) + "</p></header>" +
+    '<div class="bubble">' + mayaHtml + '<div><div class="who">Maya · Lead Data Engineer</div><p>' + esc(isl.brief) + "</p><p><b>" + esc(isl.goal) + "</b></p></div></div>" +
+    '<h2 class="sec">The plan</h2><p class="sec-sub">Each level builds one part of ' + esc(isl.file) + ".</p>" +
+    '<div class="stages">' + tiles + "</div>" +
+    (done ? '<div class="won"><div>' + crystalSvg(true, 28) + '<b>Island complete.</b> Your project is ready to ship.</div><a class="gbtn" href="#ship-' + isl.id + '">Ship it to your portfolio</a></div>'
+      : nextLv ? '<div class="go-row"><a class="gbtn big" href="#play-' + nextLv.id + '">Play level ' + (nextLv.index + 1) + ": " + esc(nextLv.name) + "</a></div>" : "") +
+    '<h2 class="sec">Your project so far</h2><p class="sec-sub">Watch the file fill in as you clear levels.</p>' + fileHtml(isl) + "</div>";
+}
+
+/* ---------------- play ---------------- */
+let PL = null;
+function startLevel(id) {
+  const l = LEVEL[id];
+  if (!l) return viewMap();
+  if (!levelOpen(l)) { location.hash = "#island-" + l.island.id; return; }
+  PL = { level: l, isl: l.island, queue: l.cards.map(c => ({ c })), done: 0, hearts: 3, mistakes: 0 };
+  app().innerHTML = '<div class="play k-' + l.island.kind + '"><div class="play-top"><a class="xbtn" href="#island-' + l.island.id + '" aria-label="Quit level">✕</a>' +
+    '<div class="pbar"><i id="pfill"></i></div><div class="hearts" id="hearts" aria-label="Hearts"></div></div>' +
+    '<div class="play-sub"><span class="chip">Level ' + (l.index + 1) + " · " + esc(l.name) + '</span><span class="building">Building <code>' + esc(l.island.file) + "</code> → " + esc(l.part) + "</span></div>" +
+    '<main class="card-wrap"><div id="card"></div></main><footer class="foot" id="foot"></footer></div>';
+  renderCard();
+}
+function setHearts() { $("#hearts").innerHTML = [0, 1, 2].map(i => heartSvg(i < PL.hearts)).join(""); }
+function setProgress() { $("#pfill").style.width = Math.round(100 * PL.done / (PL.done + PL.queue.length)) + "%"; }
+
+function tableHtml(t, opts) {
+  opts = opts || {};
+  return '<div class="tbl"><table><thead><tr>' + (opts.flag ? '<th class="fl"></th>' : "") + t.cols.map(c => "<th>" + esc(c) + "</th>").join("") + "</tr></thead><tbody>" +
+    t.rows.map((r, i) => '<tr data-row="' + i + '"' + (opts.flag ? ' tabindex="0" role="button" aria-pressed="false"' : "") + ">" + (opts.flag ? '<td class="fl"><span class="flagbox"></span></td>' : "") +
+      r.map(v => "<td>" + (v === "" ? '<span class="blank">(blank)</span>' : esc(v)) + "</td>").join("") + "</tr>").join("") + "</tbody></table></div>";
+}
+function codeHtml(code) { return '<pre class="code">' + esc(code) + "</pre>"; }
+
+const R = {}; // renderers
+R.story = {
+  html: c => '<div class="bubble big">' + mayaHtml + '<div><div class="who">Maya</div><p>' + esc(c.say) + "</p></div></div>" +
+    (c.show ? (c.show.table ? tableHtml(c.show.table) : codeHtml(c.show.code)) : ""),
+  passive: true,
+};
+R.mcq = {
+  html: c => '<h2 class="q">' + esc(c.q) + "</h2>" + (c.code ? codeHtml(c.code) : "") + (c.table ? tableHtml(c.table) : "") +
+    '<div class="opts">' + c._opts.map((o, k) => '<button class="opt" data-k="' + k + '"><span class="key">' + (k + 1) + "</span><span>" + esc(c.opts[o]) + "</span></button>").join("") + "</div>",
+  prep: c => { c._opts = shuffle(c.opts.map((_, i) => i)); },
+  bind: (el, c, st, ready) => el.addEventListener("click", e => {
+    const b = e.target.closest(".opt"); if (!b || st.locked) return;
+    $$(".opt", el).forEach(x => x.classList.remove("sel")); b.classList.add("sel"); st.sel = c._opts[+b.dataset.k]; ready(true);
+  }),
+  check: (c, st) => st.sel === c.a,
+  reveal: (el, c, st, ok) => { $$(".opt", el).forEach(b => { const v = c._opts[+b.dataset.k]; b.disabled = true; if (v === c.a) b.classList.add("right"); else if (v === st.sel) b.classList.add("wrong"); }); },
+  answer: c => c.opts[c.a],
+};
+R.match = {
+  html: c => '<h2 class="q">' + esc(c.q) + '</h2><p class="hintline">Tap a card on the left, then its partner on the right.</p><div class="match"><div class="mcol">' +
+    c.pairs.map((p, i) => '<button class="mcard" data-l="' + i + '">' + esc(p[0]) + "</button>").join("") + '</div><div class="mcol">' +
+    c._right.map(i => '<button class="mcard" data-r="' + i + '">' + esc(c.pairs[i][1]) + "</button>").join("") + "</div></div>",
+  prep: c => { do { c._right = shuffle(c.pairs.map((_, i) => i)); } while (c.pairs.length > 1 && c._right.every((v, i) => v === i)); },
+  auto: true,
+  bind: (el, c, st, ready, finish, hurt) => {
+    st.matched = 0; st.sel = null;
+    el.addEventListener("click", e => {
+      const b = e.target.closest(".mcard"); if (!b || b.disabled) return;
+      if (b.dataset.l !== undefined) { $$("[data-l]", el).forEach(x => x.classList.remove("sel")); b.classList.add("sel"); st.sel = +b.dataset.l; return; }
+      if (st.sel === null) { b.classList.add("shake"); setTimeout(() => b.classList.remove("shake"), 400); return; }
+      const r = +b.dataset.r, l = $('[data-l="' + st.sel + '"]', el);
+      if (r === st.sel) {
+        l.classList.remove("sel"); l.classList.add("ok"); b.classList.add("ok"); l.disabled = b.disabled = true; st.sel = null; st.matched++;
+        if (st.matched === c.pairs.length) finish(!st.miss);
+      } else {
+        b.classList.add("bad"); l.classList.add("bad");
+        setTimeout(() => { b.classList.remove("bad"); l.classList.remove("bad"); }, 450);
+        if (!st.miss) { st.miss = true; hurt(); }
+      }
+    });
+  },
+};
+R.order = {
+  html: c => '<h2 class="q">' + esc(c.q) + '</h2><p class="hintline">Tap the pieces in the right order. Tap a placed piece to send it back.</p>' +
+    '<ol class="slots' + (c.code ? " mono" : "") + '" id="slots"></ol><div class="pool' + (c.code ? " mono" : "") + '" id="pool"></div>',
+  prep: c => { do { c._pool = shuffle(c.items.map((_, i) => i)); } while (c._pool.every((v, i) => v === i)); },
+  bind: (el, c, st, ready) => {
+    st.seq = [];
+    const draw = () => {
+      $("#slots", el).innerHTML = c.items.map((_, i) => st.seq[i] !== undefined ? '<li><button class="piece placed" data-at="' + i + '">' + esc(c.items[st.seq[i]]) + "</button></li>" : '<li class="empty"><span>' + (i + 1) + "</span></li>").join("");
+      $("#pool", el).innerHTML = c._pool.filter(i => st.seq.indexOf(i) < 0).map(i => '<button class="piece" data-i="' + i + '">' + esc(c.items[i]) + "</button>").join("");
+      ready(st.seq.length === c.items.length);
+    };
+    draw();
+    el.addEventListener("click", e => {
+      if (st.locked) return;
+      const p = e.target.closest(".piece"); if (!p) return;
+      if (p.dataset.i !== undefined) st.seq.push(+p.dataset.i); else st.seq.splice(+p.dataset.at, 1);
+      draw();
+    });
+  },
+  check: (c, st) => st.seq.every((v, i) => v === i),
+  reveal: (el, c, st, ok) => {
+    $$(".placed", el).forEach((b, i) => { b.disabled = true; b.classList.add(st.seq[i] === i ? "right" : "wrong"); });
+    if (!ok) $("#pool", el).innerHTML = '<div class="correct-list"><b>Correct order</b><ol class="' + (c.code ? "mono" : "") + '">' + c.items.map(t => "<li>" + esc(t) + "</li>").join("") + "</ol></div>";
+  },
+};
+R.fill = {
+  html: c => {
+    let k = 0;
+    const code = esc(c.code).replace(/\[\[(\d+)\]\]/g, (_, n) => '<button class="slot" data-s="' + n + '" aria-label="Blank ' + (+n + 1) + '">&nbsp;</button>');
+    return '<h2 class="q">' + esc(c.q) + '</h2><pre class="code fillcode">' + code + '</pre><div class="chips">' + c._chips.map((t, i) => '<button class="tok" data-c="' + i + '">' + esc(t) + "</button>").join("") + "</div>";
+  },
+  prep: c => { c._chips = shuffle(c.blanks.concat(c.extra || [])); },
+  bind: (el, c, st, ready) => {
+    st.fill = c.blanks.map(() => null);
+    const draw = () => {
+      $$(".slot", el).forEach(s => { const v = st.fill[+s.dataset.s]; s.innerHTML = v === null ? "&nbsp;" : esc(c._chips[v]); s.classList.toggle("filled", v !== null); });
+      $$(".tok", el).forEach(t => { t.disabled = st.fill.indexOf(+t.dataset.c) >= 0; });
+      ready(st.fill.every(v => v !== null));
+    };
+    draw();
+    el.addEventListener("click", e => {
+      if (st.locked) return;
+      const t = e.target.closest(".tok"), s = e.target.closest(".slot");
+      if (t && !t.disabled) { const i = st.fill.indexOf(null); if (i >= 0) { st.fill[i] = +t.dataset.c; draw(); } }
+      if (s) { st.fill[+s.dataset.s] = null; draw(); }
+    });
+  },
+  check: (c, st) => st.fill.every((v, i) => c._chips[v] === c.blanks[i]),
+  reveal: (el, c, st, ok) => {
+    $$(".slot", el).forEach(s => { const i = +s.dataset.s, good = c._chips[st.fill[i]] === c.blanks[i]; s.disabled = true; s.classList.add(good ? "right" : "wrong"); if (!good) s.innerHTML = '<s>' + esc(c._chips[st.fill[i]]) + "</s> " + esc(c.blanks[i]); });
+    $$(".tok", el).forEach(t => { t.disabled = true; });
+  },
+};
+R.bug = {
+  html: c => '<h2 class="q">' + esc(c.q) + '</h2><div class="buglines">' + c.lines.map((l, i) => '<button class="bl" data-b="' + i + '"><span class="ln">' + (i + 1) + "</span><code>" + (esc(l) || " ") + "</code></button>").join("") + "</div>",
+  bind: (el, c, st, ready) => el.addEventListener("click", e => {
+    const b = e.target.closest(".bl"); if (!b || st.locked) return;
+    $$(".bl", el).forEach(x => x.classList.remove("sel")); b.classList.add("sel"); st.sel = +b.dataset.b; ready(true);
+  }),
+  check: (c, st) => st.sel === c.a,
+  reveal: (el, c, st) => {
+    $$(".bl", el).forEach(b => { b.disabled = true; const i = +b.dataset.b; if (i === c.a) b.classList.add("right"); else if (i === st.sel) b.classList.add("wrong"); });
+    const t = $('[data-b="' + c.a + '"]', el);
+    t.insertAdjacentHTML("afterend", '<div class="fixline"><span class="ln">fix</span><code>' + esc(c.fix) + "</code></div>");
+  },
+};
+R.flag = {
+  html: c => '<h2 class="q">' + esc(c.q) + '</h2><p class="hintline">Tap rows to flag them. Tap again to unflag.</p>' + tableHtml(c.table, { flag: true }),
+  bind: (el, c, st, ready) => {
+    st.set = new Set();
+    const toggle = tr => { if (st.locked) return; const i = +tr.dataset.row; st.set.has(i) ? st.set.delete(i) : st.set.add(i); tr.classList.toggle("flagged"); tr.setAttribute("aria-pressed", st.set.has(i)); ready(st.set.size > 0); };
+    el.addEventListener("click", e => { const tr = e.target.closest("tr[data-row]"); if (tr) toggle(tr); });
+    el.addEventListener("keydown", e => { const tr = e.target.closest("tr[data-row]"); if (tr && (e.key === " " || e.key === "Enter")) { e.preventDefault(); toggle(tr); } });
+  },
+  check: (c, st) => st.set.size === c.bad.length && c.bad.every(i => st.set.has(i)),
+  reveal: (el, c, st) => { $$("tr[data-row]", el).forEach(tr => { const i = +tr.dataset.row, bad = c.bad.indexOf(i) >= 0; if (bad) tr.classList.add(st.set.has(i) ? "right" : "missed"); else if (st.set.has(i)) tr.classList.add("wrong"); }); },
+};
+R.api = {
+  html: c => '<h2 class="q">' + esc(c.q) + '</h2><div class="apiwin"><div class="api-cities">' + Object.keys(WX).map((n, i) => '<button class="tok' + (i ? "" : " sel") + '" data-city="' + n + '">' + n + "</button>").join("") +
+    '</div><div class="api-req" id="apireq"></div><button class="gbtn green" id="apisend">Send request</button><div id="apires"></div></div>',
+  bind: (el, c, st, ready) => {
+    st.city = "Austin";
+    const req = () => { const w = WX[st.city]; $("#apireq", el).innerHTML = '<span class="verb">GET</span> <code>api.open-meteo.com/v1/forecast?<b>latitude=' + w.lat + "&amp;longitude=" + w.lon + "</b>&amp;daily=temperature_2m_max,precipitation_sum</code>"; };
+    req();
+    el.addEventListener("click", e => {
+      const cb = e.target.closest("[data-city]");
+      if (cb) { $$("[data-city]", el).forEach(x => x.classList.remove("sel")); cb.classList.add("sel"); st.city = cb.dataset.city; req(); $("#apires", el).innerHTML = ""; return; }
+      if (e.target.closest("#apisend")) {
+        const w = WX[st.city];
+        $("#apires", el).innerHTML = '<div class="api-status">Waiting for the server…</div>';
+        setTimeout(() => {
+          const json = '{\n  "latitude": ' + w.lat + ',\n  "longitude": ' + w.lon + ',\n  "daily": {\n    "time": ["2026-11-09", "2026-11-10"],\n    "temperature_2m_max": [' + w.temp.join(", ") + '],\n    "precipitation_sum": [' + w.rain.join(", ") + "]\n  }\n}";
+          $("#apires", el).innerHTML = '<div class="api-status ok"><b>200 OK</b> · JSON response</div><pre class="code">' + esc(json) + '</pre><p class="hintline">That text is what response.json() turns into a Python dict. Tomorrow\'s rain in ' + esc(st.city) + ": " + w.rain[1] + " mm.</p>";
+          ready(true);
+        }, 450);
+      }
+    });
+  },
+  passive: true,
+};
+
+function renderCard() {
+  setHearts(); setProgress();
+  const item = PL.queue[0];
+  if (!item) return finishLevel();
+  const c = item.c, r = R[c.t];
+  if (r.prep) r.prep(c);
+  const st = (PL.st = {});
+  const el = $("#card");
+  el.innerHTML = '<div class="card in">' + r.html(c) + "</div>";
+  const foot = $("#foot");
+  foot.className = "foot";
+  if (r.passive) {
+    foot.innerHTML = '<div class="foot-in"><span></span><button class="gbtn green" id="go"' + (c.t === "api" ? " disabled" : "") + ">Continue</button></div>";
+    $("#go").onclick = next;
+  } else if (r.auto) {
+    foot.innerHTML = '<div class="foot-in"><span class="muted">Match all the pairs to continue.</span></div>';
+  } else {
+    foot.innerHTML = '<div class="foot-in"><span></span><button class="gbtn green" id="go" disabled>Check</button></div>';
+    $("#go").onclick = check;
+  }
+  const ready = v => { const g = $("#go"); if (g) g.disabled = !v; };
+  if (r.bind) r.bind($(".card", el), c, st, ready, ok => feedback(ok, c, true), () => loseHeart());
+  window.scrollTo(0, 0);
+}
+function loseHeart() { PL.hearts = Math.max(0, PL.hearts - 1); PL.mistakes++; setHearts(); const h = $("#hearts"); h.classList.remove("hit"); void h.offsetWidth; h.classList.add("hit"); }
+function check() {
+  const item = PL.queue[0], c = item.c, r = R[c.t];
+  PL.st.locked = true;
+  const ok = r.check(c, PL.st);
+  r.reveal($("#card .card"), c, PL.st, ok);
+  if (!ok) { loseHeart(); PL.queue.push({ c, retry: true }); }
+  feedback(ok, c, false);
+}
+const PRAISE = ["Nice!", "Exactly.", "You got it.", "Spot on.", "Great work."];
+function feedback(ok, c, fromMatch) {
+  const foot = $("#foot");
+  foot.className = "foot " + (ok ? "good" : "badf");
+  const title = ok ? PRAISE[Math.floor(Math.random() * PRAISE.length)] : fromMatch ? "Got there." : "Not quite.";
+  const ans = !ok && R[c.t].answer ? '<p class="ans">Answer: <b>' + esc(R[c.t].answer(c)) + "</b></p>" : "";
+  const again = !ok && !fromMatch ? '<p class="again">This one will come back at the end of the level.</p>' : "";
+  foot.innerHTML = '<div class="foot-in"><div class="fb"><strong>' + title + "</strong>" + ans + "<p>" + esc(c.why || "") + "</p>" + again + '</div><button class="gbtn ' + (ok ? "green" : "red") + '" id="go">Continue</button></div>';
+  $("#go").onclick = next;
+  $("#go").focus({ preventScroll: true });
+}
+function next() {
+  if (PL.hearts <= 0) return outOfHearts();
+  PL.queue.shift(); PL.done++;
+  renderCard();
+}
+function outOfHearts() {
+  $("#foot").className = "foot"; $("#foot").innerHTML = "";
+  $("#card").innerHTML = '<div class="card in center"><div class="big-ico">' + heartSvg(false) + heartSvg(false) + heartSvg(false) + '</div><h2 class="q">Out of hearts</h2><p>Every engineer breaks things. The answers you just saw are fresh in your head, so this run will go better.</p><div class="row-c"><button class="gbtn green" id="retry">Try the level again</button><a class="gbtn sand" href="#island-' + PL.isl.id + '">Back to the island</a></div></div>';
+  $("#retry").onclick = () => startLevel(PL.level.id);
+}
+function finishLevel() {
+  const l = PL.level, isl = PL.isl, perfect = PL.mistakes === 0;
+  const wasIslandDone = islandDone(isl), wasDone = levelDone(l);
+  P.done[l.id] = { gem: perfect || !!(P.done[l.id] && P.done[l.id].gem) };
+  save();
+  const nowIsland = islandDone(isl) && !wasIslandDone;
+  const nextLv = isl.levels[l.index + 1];
+  $("#foot").className = "foot"; $("#foot").innerHTML = "";
+  $("#pfill").style.width = "100%";
+  $("#card").innerHTML = '<div class="card in done-card"><div class="burst">' + crystalSvg(true, 74) + (perfect ? gemSvg(true, 40) : "") + "</div>" +
+    '<h2 class="q">' + (wasDone ? "Level replayed" : "Crystal collected!") + "</h2><p>" + (perfect ? "No hearts lost, so you earned a gem too." : "Replay without losing a heart to earn this level's gem.") + "</p>" +
+    '<h3 class="built">You just built: ' + esc(l.part) + '</h3><p class="sec-sub">Here it is inside ' + esc(isl.file) + ". The highlighted part is new.</p>" + fileHtml(isl, l.id) +
+    '<div class="row-c">' + (nowIsland ? '<a class="gbtn" href="#ship-' + isl.id + '">Island complete: ship the project</a>' :
+      nextLv ? '<a class="gbtn green" href="#play-' + nextLv.id + '">Next level: ' + esc(nextLv.name) + "</a>" : "") +
+    '<a class="gbtn sand" href="#island-' + isl.id + '">Back to the island</a></div></div>';
+  const hot = $(".seg.hot"); if (hot) setTimeout(() => hot.scrollIntoView({ block: "nearest" }), 300);
+  window.scrollTo(0, 0);
+}
+
+/* ---------------- ship + portfolio ---------------- */
+function readme(isl) {
+  const run = isl.lang === "sql"
+    ? (isl.id === "reef" ? "psql -d harbor -f schema.sql" : "psql -d harbor -f sales_analysis.sql")
+    : isl.id === "api" ? "pip install requests\npython fetch_weather.py"
+    : isl.id === "volcano" ? "pip install requests psycopg2-binary\nexport DB_PASSWORD=your-password\npython pipeline.py"
+    : "python " + isl.file;
+  return "# " + isl.name.replace(/ .*/, "") + ": " + isl.project + "\n\n" +
+    "## The problem\n\n" + isl.brief + "\n\n## What it does\n\n" +
+    isl.levels.map((l, i) => (i + 1) + ". **" + l.part + "**: " + l.name).join("\n") +
+    "\n\n## Run it\n\n```bash\n" + run + "\n```\n\n## Skills\n\n" + skillsFor(isl).map(s => "- " + s).join("\n") + "\n";
+}
+function skillsFor(isl) {
+  return {
+    csv: ["Python csv module (DictReader, DictWriter)", "Text cleaning and type conversion", "Error handling with try/except", "Counting and reporting skipped rows"],
+    dupes: ["Normalizing keys before comparing", "Dictionaries for fast lookups", "Choosing which record survives", "ISO date comparison"],
+    sql: ["SELECT, WHERE, ORDER BY", "GROUP BY with SUM and COUNT", "JOINs across tables", "LEFT JOIN and HAVING"],
+    reef: ["Normalized table design", "Primary and foreign keys", "Constraints: NOT NULL, UNIQUE, CHECK", "Multi-table joins"],
+    api: ["REST APIs with the requests library", "Parsing nested JSON", "Timeouts and status codes", "Retries with exponential backoff"],
+    volcano: ["End-to-end ETL", "Data validation and quarantining bad records", "Loading PostgreSQL with psycopg2", "Idempotent loads, rollback and logging"],
+  }[isl.id];
+}
+function fullFile(isl) { return [isl.head].concat(isl.levels.map(l => l.piece), isl.foot ? [isl.foot] : []).join("\n\n\n") + "\n"; }
+function viewShip(id) {
+  const isl = ISL[id];
+  if (!isl || !islandDone(isl)) { location.hash = isl ? "#island-" + id : "#map"; return; }
+  const files = [[isl.file, fullFile(isl)], ["README.md", readme(isl)]];
+  if (isl.sample) files.push([isl.sample.name, isl.sample.text]);
+  const bullets = RESUME.filter(b => b.island === id);
+  const nxt = ISLANDS[isl.index + 1];
+  app().innerHTML = '<div class="page"><a class="back" href="#island-' + id + '">← ' + esc(isl.name) + '</a><header class="isle-head ship"><span class="eyebrow">Project complete</span><h1>' + esc(isl.project) + "</h1>" +
+    '<p class="proj">Put these files in a GitHub repository named <code>' + esc(isl.file.replace(/\..*$/, "").replace(/_/g, "-")) + "</code> and pin it to your profile.</p></header>" +
+    (bullets.length ? '<div class="resume-unlock"><span class="eyebrow">Resume line unlocked</span>' + bullets.map(b => "<p>" + esc(b.text) + "</p>").join("") + "</div>" : "") +
+    files.map((f, i) => '<div class="file"><div class="file-tab"><span>' + esc(f[0]) + '</span><button class="tbtn" data-copy="' + i + '">Copy</button></div><pre class="code" data-pre="' + i + '">' + esc(f[1]) + "</pre></div>").join("") +
+    '<div class="row-c">' + (nxt ? '<a class="gbtn" href="#island-' + nxt.id + '">Sail to ' + esc(nxt.name) + "</a>" : '<a class="gbtn" href="#portfolio">See your whole portfolio</a>') + '<a class="gbtn sand" href="#map">World map</a></div></div>';
+  app().onclick = e => { const b = e.target.closest("[data-copy]"); if (b) copy(files[+b.dataset.copy][1], $('[data-pre="' + b.dataset.copy + '"]')); };
+}
+function viewPortfolio() {
+  app().innerHTML = '<div class="page"><a class="back" href="#map">← World map</a><header class="isle-head"><span class="eyebrow">Your career board</span><h1>Portfolio</h1><p class="proj">Every island becomes a GitHub project and a line on your resume.</p></header>' +
+    '<h2 class="sec">Projects</h2><div class="plist">' + ISLANDS.map(isl => {
+      const d = islandDone(isl), n = isl.levels.filter(levelDone).length;
+      return '<a class="pitem' + (d ? " done" : "") + '" href="' + (d ? "#ship-" : "#island-") + isl.id + '"><span class="pi-isle">' + esc(isl.name) + '</span><b>' + esc(isl.project) + '</b><span class="pi-stat">' + isl.levels.map(l => crystalSvg(levelDone(l), 14)).join("") + (d ? " Ready to ship" : islandOpen(isl) ? " " + n + "/" + isl.levels.length + " levels" : " Locked") + "</span></a>";
+    }).join("") + "</div>" +
+    '<h2 class="sec">Resume lines</h2><ul class="rlist">' + RESUME.map(b => '<li class="' + (islandDone(ISL[b.island]) ? "on" : "") + '"><span class="tick" aria-hidden="true"></span><span>' + esc(b.text) + '<small>' + (islandDone(ISL[b.island]) ? "Earned on " : "Unlocks on ") + esc(ISL[b.island].name) + "</small></span></li>").join("") + "</ul></div>";
+}
+
+/* ---------------- router ---------------- */
+function route() {
+  app().onclick = null;
+  const h = (location.hash || "#map").slice(1);
+  const i = h.indexOf("-"), base = i < 0 ? h : h.slice(0, i), arg = i < 0 ? "" : h.slice(i + 1);
+  document.body.dataset.view = base;
+  if (base === "island") viewIsland(arg);
+  else if (base === "play") startLevel(arg);
+  else if (base === "ship") viewShip(arg);
+  else if (base === "portfolio") viewPortfolio();
+  else viewMap();
+  if (base !== "play") window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (document.body.dataset.view === "map" || !location.hash || location.hash === "#map") viewMap(); }, 200); });
+document.addEventListener("keydown", e => {
+  if (document.body.dataset.view !== "play") return;
+  const go = $("#go");
+  if (e.key === "Enter" && go && !go.disabled && document.activeElement && !document.activeElement.closest("tr[data-row]")) { e.preventDefault(); go.click(); return; }
+  if (/^[1-4]$/.test(e.key)) { const o = $$(".opt")[+e.key - 1]; if (o && !o.disabled) o.click(); }
+});
+route();
+})();
+
+</script>
+</body>
+</html>
