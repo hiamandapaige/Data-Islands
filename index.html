@@ -284,6 +284,52 @@ body[data-view="play"]::before { content: ""; position: fixed; inset: 0 0 auto; 
 .rlist li.on .tick { border-color: var(--crystal); background: var(--crystal); box-shadow: inset 0 0 0 4px #fff; }
 .panel { background: #fff; border-radius: 18px; padding: 20px; display: grid; gap: 10px; }
 .panel.center { text-align: center; justify-items: center; }
+
+/* ---------- teaching layer */
+.learn { display: grid; gap: 14px; }
+.learn-tag { justify-self: start; background: var(--crystal); color: #fff; font-weight: 900; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; }
+.learn-tag.try { background: var(--leaf); }
+.learn-term { font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 6vw, 40px); line-height: 1.05; letter-spacing: .01em; }
+.learn .big { margin: 0; font-size: 18px; line-height: 1.6; max-width: 62ch; }
+.like { background: #fff7e0; border-radius: 14px; padding: 12px 14px; }
+.like b { font-size: 13px; font-weight: 900; color: var(--gold-deep); }
+.like p { margin: 2px 0 0; }
+.ex { display: grid; gap: 6px; }
+.ex-label { font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.outbox { margin: 0; padding: 12px 16px; background: #eef8f0; border: 2px solid #bfe5c7; color: var(--ink); border-radius: 12px; font-family: var(--f-mono); font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; font-weight: 400; }
+.outbox.err { background: var(--bad-bg); border-color: #f2b8b8; color: #9e2a2e; }
+.chain { display: grid; gap: 0; justify-items: start; }
+.chain .val { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--code-bg); color: var(--code-ink); border-radius: 12px; padding: 10px 14px; max-width: 100%; }
+.chain .val code { font-size: 15px; white-space: pre-wrap; word-break: break-word; }
+.chain .val.last { background: #1f5a37; }
+.chain .op0 { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; color: var(--code-dim); }
+.chain-step { padding: 4px 0 4px 22px; border-left: 3px dashed var(--sand-deep); margin-left: 18px; }
+.chain-step .op { display: inline-block; font-family: var(--f-mono); font-size: 14px; background: var(--gold); color: var(--ink); padding: 3px 10px; border-radius: 8px; font-weight: 600; }
+.lab { display: grid; gap: 12px; background: var(--mist); border-radius: 16px; padding: 14px; }
+.lab-row { display: grid; gap: 6px; }
+.lab-row pre.code { white-space: pre-wrap; word-break: break-all; }
+.lab-val code { display: inline-block; font-size: 20px; background: #fff; border: 2px solid var(--line); border-radius: 10px; padding: 6px 12px; white-space: pre; }
+.lab-goal { font-weight: 800; }
+.lab-goal code { background: #fff; border-radius: 6px; padding: 2px 6px; white-space: pre; }
+.lab-ok { background: var(--ok-bg); color: var(--ok); font-weight: 800; border-radius: 10px; padding: 10px 12px; }
+.lab-err { background: var(--bad-bg); color: #9e2a2e; font-family: var(--f-mono); font-size: 13px; border-radius: 10px; padding: 10px 12px; word-break: break-word; }
+.linkbtn { justify-self: start; background: none; border: 0; padding: 4px 0; font-weight: 800; color: var(--ocean); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: 15px; }
+.linkbtn.help { margin-top: 2px; }
+.term { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; text-decoration: underline dotted var(--crystal); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.term:hover { color: var(--crystal); }
+.sheet-wrap { position: fixed; inset: 0; z-index: 30; background: rgba(19, 34, 46, .45); display: flex; align-items: flex-end; justify-content: center; animation: fade .15s; }
+@keyframes fade { from { opacity: 0; } }
+.sheet { background: #fff; width: 100%; max-width: 640px; max-height: 75vh; overflow: auto; border-radius: 22px 22px 0 0; padding: 18px max(18px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); animation: up .2s ease-out; }
+@keyframes up { from { transform: translateY(40px); } }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+.sheet-head b { font-family: var(--f-display); font-weight: 400; font-size: 22px; }
+.sheet-x { background: var(--mist); border: 0; width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+.sheet dl { margin: 0; display: grid; gap: 4px; }
+.sheet dt { margin-top: 10px; }
+.sheet dt code { font-size: 15px; background: var(--code-bg); color: var(--code-ink); padding: 3px 8px; border-radius: 6px; }
+.sheet dd { margin: 4px 0 0; font-size: 16px; line-height: 1.5; }
+.hearts svg { width: 21px; height: 19px; }
+
 .toast { position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 16px); opacity: 0; background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 99px; font-weight: 800; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 20; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
@@ -1125,6 +1171,381 @@ const RESUME = [
   { text: "Incorporated error handling and data validation.", island: "volcano" },
 ];
 
+/* Beginner layer: teach every idea before it is tested. */
+const L = (term, say, extra) => Object.assign({ t: "learn", term, say }, extra || {});
+
+/* ---------- new first level: Python from zero ---------- */
+ISLANDS[0].levels.unshift({
+  id: "csv0", name: "Python from zero", part: "Basics",
+  piece: `# Python basics used in this script:
+#   variables hold values      city = "Austin"
+#   strings are text in quotes "35.00" is text, 35.0 is a number
+#   functions take input       float("35.00") -> 35.0
+#   methods use a dot          " austin ".strip() -> "austin"`,
+  cards: [
+    { t: "story", say: "Never written code before? Perfect. Before we fix the orders file, this level teaches the handful of ideas you need, one at a time. Nothing here is a test until you've seen it first." },
+    L("Code", "Code is a list of instructions the computer follows, top to bottom. Python is a language for writing those instructions in words that read almost like English. print() tells Python to show something on the screen.",
+      { code: `print("Hello, Harbor Goods!")`, out: "Hello, Harbor Goods!" }),
+    L("Variable", "A variable is a labeled box that holds a value so you can use it later. The = sign means \"put this value in the box\". The name on the left is the label.",
+      { like: "Like writing \"city\" on a sticky note and sticking it on a box that holds the word Austin.", code: `city = "Austin"\nprint(city)`, out: "Austin" }),
+    L("String", "Text in Python is called a string. You write it inside quotes. The quotes aren't part of the text; they just show where it starts and ends. Spaces inside the quotes are part of the text.",
+      { code: `name = "Ava"\nmessy = "  austin "\nprint(name)\nprint(messy)`, out: "Ava\n  austin " }),
+    { t: "mcq", q: "Which one is a string?", opts: ["35", "\"35\"", "city"], a: 1,
+      why: "Quotes make it a string (text). 35 without quotes is a number, and city without quotes is the name of a variable." },
+    L("Numbers vs text", "35.0 without quotes is a number: you can do math with it. \"35.00\" in quotes is text that only looks like a number. Adding two strings just glues them together.",
+      { code: `print(35.0 + 5)\nprint("35.00" + "5")`, out: "40.0\n35.005" }),
+    L("Function", "A function is a little machine: you put something in between the parentheses ( ), and it gives you something back. float() is a function that turns number-looking text into a real number. (A float is any number with a decimal point.)",
+      { like: "Like a juicer: oranges go in, juice comes out.", code: `amount = float("18.25")\nprint(amount + 1)`, out: "19.25" }),
+    L("Method (the dot)", "Some functions belong to a value and are written after a dot. \" austin \".strip() means: take this text and strip the spaces off both ends. .title() capitalizes each word, .upper() makes ALL CAPS and .lower() makes all lowercase.",
+      { chain: [["start with", "\" aUSTIN \""], [".strip()", "\"aUSTIN\""], [".title()", "\"Austin\""]] }),
+    L("Chaining", "You can put dots one after another. Each one works on the result of the one before it, reading left to right.",
+      { code: `city = " aUSTIN "\nprint(city.strip().title())`, out: "Austin" }),
+    { t: "lab", q: "Your turn. Tap the methods to clean this city name until it says Austin.", start: " aUSTIN ", ops: ["strip", "title", "upper", "lower"], goal: "Austin" },
+    { t: "mcq", q: "What does \"  hi  \".strip() give back?", opts: ["\"hi\"", "\"  hi  \"", "\"HI\""], a: 0,
+      why: ".strip() removes the spaces at both ends and leaves the letters alone." },
+    { t: "mcq", q: "price = \"35.00\". Which line gives you a number you can add up?", opts: ["price.strip()", "float(price)", "price.title()"], a: 1,
+      why: "float() turns number-looking text into a real number. strip() and title() only tidy text." },
+  ],
+});
+
+/* ---------- inserts: [levelId]: { beforeIndex: [cards] } ---------- */
+const INSERTS = {
+  csv1: {
+    0: [L("CSV file", "CSV stands for comma-separated values. It's a plain text file where each line is one row, and commas separate the columns. The first line is the header: it names the columns. Excel and Google Sheets can open it as a table.",
+      { code: `order_id,city,amount\n1001, austin ,"$1,200.50"\n1002,Austin,35.00`, codeLabel: "What the file really looks like", table: { cols: ["order_id", "city", "amount"], rows: [["1001", "\u00a0austin\u00a0", "$1,200.50"], ["1002", "Austin", "35.00"]] }, tableLabel: "How a spreadsheet shows it" })],
+    3: [L(".replace()", "text.replace(old, new) swaps every copy of old for new. Replacing with \"\" (empty quotes) simply deletes it. That's how we turn \"$1,200.50\" into \"1200.50\", which float() can read.",
+          { chain: [["start with", "\"$1,200.50\""], [".replace(\"$\", \"\")", "\"1,200.50\""], [".replace(\",\", \"\")", "\"1200.50\""], ["float( )", "1200.5"]] }),
+        { t: "lab", q: "Try it: turn the money text into a real number. (Watch what happens if you use float() too early.)", start: "$1,200.50", ops: ["dollar", "comma", "float"], goal: 1200.5 },
+        L("Skip and count", "When a row is too broken to fix, like a blank amount, the safest move is to leave it out of the clean file and add 1 to a counter. Then the report can say exactly how many rows were skipped.")],
+    4: [L("Script", "A script is a program saved in a file, like clean_orders.py (.py means a Python file). You can run it again any time, and it does exactly the same steps every time.")],
+  },
+  csv2: {
+    0: [L("import", "Python comes with toolboxes called modules. import csv opens the toolbox for CSV files. After that you use its tools with a dot: csv.DictReader is the DictReader tool from the csv toolbox.",
+          { like: "Like taking the measuring tools out of the garage before a project.", code: `import csv\nprint(csv.DictReader)`, out: "<class 'csv.DictReader'>" }),
+        L("open() and with", "open(path) opens a file so Python can read it. Writing with open(\"orders.csv\") as f: means: open the file, call it f, and close it automatically when the indented lines underneath are finished.",
+          { code: `with open("orders.csv") as f:\n    first_line = f.readline()\nprint(first_line)`, out: "order_id,city,amount" }),
+        L("Indentation", "Lines that are pushed in with spaces belong to the line above that ends in a colon :. Python uses those spaces, not brackets, to know which lines are inside a block. Four spaces per level is the standard."),
+        L("Dictionary", "A dictionary stores values under labels called keys, written inside curly brackets { }. You get a value back by asking for its key in square brackets.",
+          { code: `row = {"city": "Austin", "amount": "35.00"}\nprint(row["city"])`, out: "Austin" }),
+        L("DictReader", "csv.DictReader(f) reads the file one line at a time and turns each line into a dictionary. It uses the header line for the keys, so you can write row[\"city\"].",
+          { chain: [["file line", "1002,Austin,35.00"], ["DictReader", "{\"order_id\": \"1002\", \"city\": \"Austin\", \"amount\": \"35.00\"}"]] })],
+    2: [L("List", "A list holds many values in order, inside square brackets [ ]. list(...) collects everything a reader produces into one list, so you have all the rows at once.",
+          { code: `cities = ["Austin", "Denver"]\nprint(len(cities))\nprint(cities[0])`, out: "2\nAustin" }),
+        L("def and return", "def is how you make your own function. def read_orders(path): creates a machine called read_orders that takes one input, path. The indented lines are what it does, and return hands the result back.",
+          { code: `def add_tax(price):\n    return price * 1.08\n\nprint(add_tax(100))`, out: "108.0" })],
+    4: [L("for loop", "for row in reader: repeats the indented lines once for every row, and each time row holds the current one. This is how a program touches 40,000 rows without you writing 40,000 lines.",
+          { code: `for city in ["Austin", "Denver", "Seattle"]:\n    print("Shipping to", city)`, out: "Shipping to Austin\nShipping to Denver\nShipping to Seattle" })],
+  },
+  csv3: {
+    0: [L("Helper function", "A helper is a small function that does one job well. We'll write two: clean_city() fixes a city name, and to_amount() turns money text into a number. Then the main loop just calls them.")],
+    3: [L("int vs float", "int() makes a whole number, like 35. float() makes a number with decimals, like 35.5. Money has cents, so we use float(). int(\"1200.50\") would fail because of the .50.",
+          { code: `print(int("35"))\nprint(float("1200.50"))`, out: "35\n1200.5" })],
+    4: [L("Spot the bug", "When code breaks, read it one line at a time and ask: what is the value at this line? Here, follow \"$1,200.50\" through each line and find the first line that can't handle it.")],
+    5: [L("Error", "When Python can't do something, it stops and raises an error with a name and a message. A ValueError means the value was the wrong kind, like asking float() to read the word abc.",
+          { code: `float("abc")`, out: "ValueError: could not convert string to float: 'abc'" })],
+  },
+  csv4: {
+    1: [L("try / except", "try: means attempt the indented code. except ValueError: means if that specific error happens, run this instead of crashing. The program keeps going.",
+          { like: "Like trying a key in a lock and, if it doesn't fit, putting the box aside instead of giving up on the whole move.",
+            code: `try:\n    amount = float("abc")\nexcept ValueError:\n    amount = 0\nprint(amount)`, out: "0" }),
+        L("continue and break", "Inside a for loop, continue skips the rest of this round and moves to the next item. break stops the whole loop immediately.",
+          { code: `for n in [1, 2, 3, 4]:\n    if n == 2:\n        continue\n    print(n)`, out: "1\n3\n4" }),
+        L("Counting with += 1", "skipped += 1 is short for skipped = skipped + 1. Start a counter at 0 before the loop, then add 1 each time something happens.",
+          { code: `skipped = 0\nskipped += 1\nskipped += 1\nprint(skipped)`, out: "2" })],
+    3: [L("Writing a CSV", "csv.DictWriter does the opposite of DictReader: it writes dictionaries out as CSV lines. fieldnames lists the columns, writeheader() writes the header line, and writerows() writes every row. Opening with \"w\" means write.")],
+  },
+  dupes1: {
+    0: [L("Duplicate record", "A duplicate is the same real thing stored more than once. Duplicates send the same email three times, count one customer as three, and inflate totals. Finding them is one of the most common data jobs.")],
+    2: [L("Unique identifier", "To match rows you need a value that belongs to exactly one person or thing. An email usually does. A name doesn't: two people can share a name, and one person can type it differently.")],
+  },
+  dupes2: {
+    0: [L("Normalize", "Normalizing means putting every value into one standard form before comparing. For emails: trim the spaces and make everything lowercase, so \" AVA@mail.com\" and \"ava@mail.com\" become identical.",
+          { chain: [["start with", "\" AVA@mail.com\""], [".strip()", "\"AVA@mail.com\""], [".lower()", "\"ava@mail.com\""]] })],
+    1: [{ t: "lab", q: "Try it: normalize this email so it matches ava@mail.com.", start: " AVA@mail.com ", ops: ["strip", "lower", "upper", "title"], goal: "ava@mail.com" }],
+  },
+  dupes3: {
+    1: [L("if / else", "if checks whether something is true. If it is, the indented lines under it run. else: runs when it wasn't true. Exactly one of the two blocks runs.",
+          { code: `amount = 120\nif amount > 100:\n    print("big order")\nelse:\n    print("small order")`, out: "big order" }),
+        L("in", "x in something asks: is x inside it? For a dictionary it checks the keys. The answer is True or False.",
+          { code: `seen = {"ava@mail.com": 1}\nprint("ava@mail.com" in seen)\nprint("liam@mail.com" in seen)`, out: "True\nFalse" }),
+        L(".append()", "my_list.append(x) adds x to the end of a list. It's how you collect things while a loop runs.",
+          { code: `dupes = []\ndupes.append("row 3")\ndupes.append("row 4")\nprint(dupes)`, out: "['row 3', 'row 4']" })],
+  },
+  dupes4: {
+    2: [L("Comparing with > and <", "> means greater than and < means less than. Python can compare text too: it goes letter by letter, like a dictionary. With dates written YYYY-MM-DD, later dates come out bigger.",
+          { code: `print(5 > 3)\nprint("b" > "a")\nprint("2026-03-20" > "2026-02-01")`, out: "True\nTrue\nTrue" })],
+    4: [L("and / or", "a or b is True if at least one side is True. a and b is True only if both are. We keep a row if it's the first one we've seen OR it's newer than the stored one.",
+          { code: `print(True or False)\nprint(True and False)`, out: "True\nFalse" })],
+  },
+  sql1: {
+    0: [L("Database", "A database stores data in tables, like tabs in a spreadsheet, but built for millions of rows and many users at once. PostgreSQL is a popular free database that many companies use."),
+        L("SQL", "SQL (say \"sequel\") is the language for asking a database questions. A question written in SQL is called a query. SQL keywords like SELECT are usually written in capitals so they stand out.")],
+    1: [L("SELECT and FROM", "SELECT lists the columns you want back. FROM names the table. Together they're the start of every query.",
+          { code: `SELECT name, price\nFROM products;`, table: { cols: ["name", "price"], rows: [["Trail Daypack", "64.00"], ["Camp Stove", "89.50"], ["Desk Lamp", "27.90"], ["…", "…"]] }, tableLabel: "Result" }),
+        L("WHERE", "WHERE keeps only the rows where a condition is true. You can compare with > (more than), < (less than) and = (equals).",
+          { code: `SELECT name, price\nFROM products\nWHERE price < 30;`, table: { cols: ["name", "price"], rows: [["Desk Lamp", "27.90"], ["Insulated Bottle", "18.75"]] }, tableLabel: "Result" }),
+        L("ORDER BY", "ORDER BY sorts the result. ASC means smallest first (the default). DESC means descending: biggest first.",
+          { code: `SELECT name, price\nFROM products\nORDER BY price DESC;`, table: { cols: ["name", "price"], rows: [["Camp Stove", "89.50"], ["Wireless Earbuds", "79.99"], ["Trail Daypack", "64.00"], ["…", "…"]] }, tableLabel: "Result" })],
+  },
+  sql2: {
+    0: [L("SUM and COUNT", "These collapse many rows into one number. SUM(total) adds up a column. COUNT(*) counts rows. They're called aggregate functions.",
+          { code: `SELECT COUNT(*), SUM(total)\nFROM orders;`, table: { cols: ["count", "sum"], rows: [["6", "565.00"]] }, tableLabel: "Result" })],
+    1: [L("GROUP BY", "GROUP BY sorts rows into buckets that share a value, then runs SUM or COUNT once per bucket. Six orders grouped by status become one row per status.",
+          { code: `SELECT status, COUNT(*)\nFROM orders\nGROUP BY status;`, table: { cols: ["status", "count"], rows: [["completed", "4"], ["cancelled", "1"], ["pending", "1"]] }, tableLabel: "Result" })],
+    3: [L("AS (naming a column)", "AS gives a result column a readable name. SUM(total) AS revenue shows a column called revenue instead of sum."),
+        L("DATE_TRUNC", "DATE_TRUNC('month', order_date) rounds a date down to the first day of its month, so 2026-01-19 becomes 2026-01-01. Grouping by that gives one bucket per month.")],
+  },
+  sql3: {
+    0: [L("ID column", "An id is a number that names one row, like customer 2. The customers table has the name for each id; the orders table just stores the id. Storing the name once and pointing to it saves a lot of mistakes.")],
+    2: [L("JOIN … ON", "JOIN brings a second table into the query. ON says which columns must match, so each order lines up with the customer whose id it holds.",
+          { code: `SELECT o.order_id, c.name\nFROM orders o\nJOIN customers c ON c.customer_id = o.customer_id;`, table: { cols: ["order_id", "name"], rows: [["101", "Liam Patel"], ["102", "Ava Reyes"], ["…", "…"]] }, tableLabel: "Result" }),
+        L("Short table names", "In FROM customers c, the c is a nickname for the table. c.name means the name column from customers. It keeps queries short and clear when two tables are involved."),
+        L("LIMIT", "LIMIT 5 keeps only the first 5 rows of the result. Combined with ORDER BY ... DESC, it gives you a top 5.")],
+  },
+  sql4: {
+    1: [L("LEFT JOIN", "A plain JOIN drops rows that have no match. LEFT JOIN keeps every row from the first (left) table, even with no match in the second."),
+        L("NULL", "NULL means \"no value here\". It's not zero and not empty text; it's missing. After a LEFT JOIN, customers with no orders get NULL in the order columns. You test for it with IS NULL.")],
+    2: [L("HAVING", "WHERE filters rows before grouping. HAVING filters the groups after SUM, COUNT or MAX have been calculated, so conditions on those totals go in HAVING.",
+          { code: `SELECT customer_id, COUNT(*)\nFROM orders\nGROUP BY customer_id\nHAVING COUNT(*) >= 2;`, table: { cols: ["customer_id", "count"], rows: [["1", "2"], ["2", "2"], ["3", "2"]] }, tableLabel: "Result" })],
+  },
+  reef1: {
+    0: [L("Redundancy", "Redundancy means the same fact is stored in more than one place. It seems harmless until the fact changes: then some copies get updated and others don't, and reports disagree.")],
+  },
+  reef2: {
+    2: [L("Primary key", "A primary key is the column that uniquely names each row. No two rows can share it and it can never be empty. customer_id 1 always means Ava.")],
+    3: [L("CREATE TABLE", "CREATE TABLE makes a new, empty table. Inside the brackets you list each column with its type and its rules, separated by commas.",
+          { code: `CREATE TABLE pets (\n    pet_id SERIAL PRIMARY KEY,\n    name   TEXT NOT NULL\n);` }),
+        L("Column types", "Every column has a type that says what it can hold. TEXT holds words. INT holds whole numbers. NUMERIC(10, 2) holds exact money amounts with 2 decimals. DATE holds dates. SERIAL is a whole number the database fills in automatically: 1, 2, 3…"),
+        L("NOT NULL and UNIQUE", "NOT NULL means the column can never be left empty. UNIQUE means no two rows may have the same value, so the database refuses a second account with the same email.")],
+    4: [L("CHECK", "CHECK (price >= 0) is a rule the database tests on every new row. If a row breaks it, the database rejects that row. It's data validation built into the table.")],
+  },
+  reef3: {
+    1: [L("Foreign key", "A foreign key is a column that points to a primary key in another table. REFERENCES customers(customer_id) means every value here must already exist as a customer.",
+          { like: "Like a library card number: it's only valid if that card actually exists in the library's records." })],
+    4: [L("Two-column key", "A primary key can be made of two columns together. (order_id, product_id) means the same pair can only appear once, so one order can't list the same product twice.")],
+  },
+  reef4: {
+    1: [L("One-to-many", "One customer can place many orders, but each order belongs to exactly one customer. That's a one-to-many relationship, and a foreign key on the \"many\" side (orders.customer_id) is how you store it.")],
+  },
+  api1: {
+    1: [L("URL", "A URL is a web address. The part after ? holds parameters: extra details, written as name=value pairs joined by &."),
+        L("Request and response", "Your program sends a request to a URL. The server sends back a response: a status code saying how it went, plus the data."),
+        L("JSON", "JSON is the text format most APIs use for data. Curly brackets { } hold named values, square brackets [ ] hold lists. It looks almost exactly like Python dictionaries and lists.",
+          { code: `{"city": "Austin", "temps": [24.1, 22.8]}` }),
+        L("Status code", "Every response has a 3-digit status code. 200 means success. Codes in the 400s mean your request had a problem (404: not found). Codes in the 500s mean the server had a problem.")],
+  },
+  api2: {
+    1: [L("requests library", "requests is the most popular Python library for talking to websites and APIs. It isn't built in: you install it once with pip install requests, then import requests."),
+        L("GET", "requests.get(url) sends a GET request: \"please give me data\". params= is a dictionary of parameters, and requests builds the ?latitude=...&longitude=... part for you."),
+        L(".json()", "response.json() reads the JSON text from the response and turns it into Python dictionaries and lists you can use."),
+        L("timeout", "timeout=10 tells requests to give up after 10 seconds if the server never answers, instead of waiting forever."),
+        L("raise_for_status()", "response.raise_for_status() checks the status code. If it's an error (400s or 500s), it raises a Python error so the problem can't slip by unnoticed. If it's 200, it does nothing.")],
+  },
+  api3: {
+    1: [L("Reaching into JSON", "You reach inside step by step: a key in square brackets for a dictionary, a position number for a list. Positions start at 0, so [0] is the first item and [1] is the second.",
+          { chain: [["data", "{… \"daily\": {…}}"], ["[\"daily\"]", "{\"time\": [...], \"precipitation_sum\": [0.0, 12.4], …}"], ["[\"precipitation_sum\"]", "[0.0, 12.4]"], ["[0]", "0.0"]] })],
+    3: [L("zip()", "zip() walks several lists side by side, giving you one item from each at a time. Perfect when the API gives you separate lists that line up by position.",
+          { code: `days = ["Mon", "Tue"]\nrain = [0.0, 12.4]\nfor d, r in zip(days, rain):\n    print(d, r)`, out: "Mon 0.0\nTue 12.4" })],
+  },
+  api4: {
+    2: [L("range()", "range(1, 4) produces the numbers 1, 2, 3. It stops just before the end number. for attempt in range(1, 4): runs a block three times.",
+          { code: `for attempt in range(1, 4):\n    print("attempt", attempt)`, out: "attempt 1\nattempt 2\nattempt 3" }),
+        L("time.sleep()", "time.sleep(2) pauses the program for 2 seconds. It comes from the time module, so you import time first."),
+        L("raise", "raise on its own, inside an except block, re-throws the error you just caught. Use it when you've done what you can (like logging) and the program should still stop and report the failure.")],
+    3: [L("** (power)", "2 ** 3 means 2 to the power of 3: 2 × 2 × 2 = 8. Using 2 ** attempt makes the wait double each time.",
+          { code: `print(2 ** 1, 2 ** 2, 2 ** 3)`, out: "2 4 8" })],
+  },
+  volcano1: {
+    1: [L("ETL", "ETL stands for Extract, Transform, Load: pull data from a source, clean and reshape it, then save it into a database. A pipeline is the program that does this automatically, often every night.")],
+  },
+  volcano2: {
+    0: [L("Validation", "Validation means checking every record against rules before you accept it: required fields present, emails look like emails, amounts are numbers and not negative. Records that fail are rejected, with a reason.")],
+    2: [L(".get()", "row.get(\"order_id\") reads a dictionary value like row[\"order_id\"], but if the key is missing it gives back None (Python's word for nothing) instead of crashing.",
+          { code: `order = {"email": "ava@mail.com"}\nprint(order.get("order_id"))`, out: "None" }),
+        L("not / not in", "not flips True and False. if not order_id: is true when order_id is empty or missing. \"@\" not in email is true when the email has no @ sign.",
+          { code: `print("@" not in "maya.mail.com")`, out: "True" })],
+  },
+  volcano3: {
+    0: [L("PostgreSQL from Python", "psycopg2 is the library Python uses to talk to PostgreSQL. A connection is the open line to the database. A cursor is what sends SQL down that line. commit() saves your changes for real.")],
+    2: [L("f-string", "An f-string puts values into text: f\"Hi {name}\" becomes \"Hi Ava\". Handy for messages, but dangerous for SQL, because whatever is in the value becomes part of the SQL itself.",
+          { code: `name = "Ava"\nprint(f"Hi {name}")`, out: "Hi Ava" }),
+        L("Placeholders (%s)", "With psycopg2 you write %s where each value goes and pass the values separately. psycopg2 inserts them safely, so a city like O'Fallon or a malicious value can't break your SQL.")],
+    4: [L("ON CONFLICT DO NOTHING", "If an insert would create a second row with the same order_id, ON CONFLICT (order_id) DO NOTHING quietly skips it. Running the load twice then gives the same result as running it once.")],
+  },
+  volcano4: {
+    1: [L("rollback()", "If something fails halfway through, conn.rollback() undoes everything since the last commit, so the database never keeps a half-finished load."),
+        L("finally", "A finally: block runs no matter what: after success, after an error, every time. It's where cleanup goes, like closing the database connection."),
+        L("Logging", "logging writes timestamped messages about what the program did: \"loaded 120 orders\", \"rejected A-19: bad email\". When a 3 a.m. job fails, the log is how you find out why.")],
+    3: [L("Environment variable", "An environment variable is a setting stored on the computer that runs the program, not in the code. os.environ[\"DB_PASSWORD\"] reads one. Secrets stay out of your code and out of GitHub.")],
+  },
+};
+
+ISLANDS.forEach(isl => isl.levels.forEach(lv => {
+  const ins = INSERTS[lv.id]; if (!ins) return;
+  const out = [];
+  lv.cards.forEach((c, i) => { (ins[i] || []).forEach(x => out.push(x)); out.push(c); });
+  lv.cards = out;
+}));
+
+/* ---------- glossary for "What do these words mean?" ---------- */
+const GLOSSARY = [
+  ["Python", "A popular programming language, known for reading almost like English. Most data engineering jobs use it."],
+  ["string", "Text, written inside quotes: \"Austin\". Even \"35.00\" is a string if it's in quotes."],
+  ["variable", "A named box that holds a value, created with =. city = \"Austin\" puts Austin in a box called city."],
+  ["function", "A reusable machine: input goes in the parentheses, a result comes back. float(\"3.5\") gives 3.5."],
+  ["method", "A function attached to a value with a dot, like \"hi\".upper()."],
+  ["print", "print(x) shows x on the screen. It's how you see what your code is doing."],
+  [".strip()", "Removes spaces from both ends of text. \" austin \" becomes \"austin\"."],
+  [".title()", "Capitalizes the first letter of each word and lowercases the rest. \"aUSTIN\" becomes \"Austin\"."],
+  [".upper()", "Makes every letter uppercase. \"austin\" becomes \"AUSTIN\"."],
+  [".lower()", "Makes every letter lowercase. \"AVA@Mail.com\" becomes \"ava@mail.com\"."],
+  [".replace(", "text.replace(old, new) swaps every old for new. Replacing with \"\" deletes it."],
+  [".split(", "Breaks text into a list of pieces. \"a b\".split() gives [\"a\", \"b\"]."],
+  ["split", "Breaks text into a list of pieces. \"a b\".split() gives [\"a\", \"b\"]."],
+  ["float", "A number with a decimal point, like 35.5. float(\"35.5\") turns text into that number."],
+  ["int", "A whole number, like 35. int(\"35\") turns text into it; int(\"35.5\") fails."],
+  ["CSV", "Comma-separated values: a text file where each line is a row and commas separate the columns."],
+  ["header", "The first line of a CSV file, naming each column."],
+  ["row", "One record, one line of data: one order, one customer."],
+  ["column", "One kind of value across all rows, like city or amount."],
+  ["import", "Loads a toolbox (module) so you can use its tools. import csv loads the CSV tools."],
+  ["csv", "Python's built-in toolbox (module) for reading and writing CSV files."],
+  ["pandas", "A popular add-on library for working with tables of data. Powerful, but this script only needs the built-in csv module."],
+  ["module", "A toolbox of ready-made code you load with import."],
+  ["library", "Code someone else wrote that you can install and import, like requests or psycopg2."],
+  ["open", "open(path) opens a file so Python can read it (or write it, with \"w\")."],
+  ["read", "Gets the contents of an open file. Not the tool we need here: DictReader does the reading for us."],
+  ["reader", "csv.reader gives each row as a plain list. DictReader gives dictionaries, which are easier to use."],
+  ["DictReader", "Reads a CSV file row by row and turns each row into a dictionary using the header for the keys."],
+  ["DictWriter", "Writes dictionaries out as CSV rows. The opposite of DictReader."],
+  ["writeheader", "Writes the header line (the column names) at the top of a new CSV file."],
+  ["writerows", "Writes every row from a list into the CSV file."],
+  ["with", "with open(...) as f: opens something and closes it automatically when the indented block ends."],
+  ["newline", "A detail for the csv module: newline=\"\" stops extra blank lines appearing on some computers. Just include it."],
+  ["dictionary", "Values stored under labels (keys): {\"city\": \"Austin\"}. row[\"city\"] gives \"Austin\"."],
+  ["key", "The label in a dictionary, like \"city\" in {\"city\": \"Austin\"}. In SQL, a column that identifies rows."],
+  ["list", "Many values in order, in square brackets: [1, 2, 3]."],
+  ["def", "Creates your own function: def name(inputs): followed by indented lines."],
+  ["return", "Hands a result back from a function to whoever called it."],
+  ["for", "for x in things: repeats the indented lines once for every item."],
+  ["loop", "Code that repeats, usually once per item in a list or once per row in a file."],
+  ["if", "Runs the indented lines only when a condition is true."],
+  ["else", "Runs when the if condition was not true."],
+  ["elif", "Short for else if: another condition to check when the first if was false."],
+  ["in", "x in things checks whether x is inside. For a dictionary it checks the keys."],
+  ["not", "Flips True to False and back. \"@\" not in email is True when there's no @."],
+  ["not in", "True when something is missing: \"@\" not in \"maya.mail.com\" is True."],
+  ["and", "True only when both sides are true."],
+  ["or", "True when at least one side is true."],
+  ["append", "list.append(x) adds x to the end of a list."],
+  ["add", "set.add(x) adds to a set, not a list. Lists use append."],
+  ["extend", "Adds every item from another list to the end of this one."],
+  ["try", "Starts a block of code that might fail, so you can catch the error."],
+  ["except", "Catches a specific error from the try block and runs this code instead of crashing."],
+  ["finally", "Runs no matter what happened in try/except. Used for cleanup."],
+  ["continue", "Skips the rest of this loop round and moves to the next item."],
+  ["break", "Stops the whole loop immediately."],
+  ["pass", "Does nothing. A placeholder where Python requires a line."],
+  ["raise", "Throws an error. On its own inside except, it re-throws the error you caught."],
+  ["error", "Python's way of saying it couldn't do something. It stops the program unless caught with try/except."],
+  ["ValueError", "The error you get when a value is the wrong kind, like float(\"abc\")."],
+  ["None", "Python's word for \"nothing here\"."],
+  ["True", "Yes. One of the two answers a comparison can give."],
+  ["False", "No. One of the two answers a comparison can give."],
+  ["script", "A program saved in a file (.py for Python) that you can run again and again."],
+  ["duplicate", "The same record stored more than once."],
+  ["normalize", "Put values into one standard form before comparing, like trimming and lowercasing emails."],
+  ["SQL", "The language for asking databases questions."],
+  ["query", "A question written in SQL."],
+  ["database", "Organized storage for data in tables, built for many rows and many users."],
+  ["table", "Rows and columns of data in a database, like a spreadsheet tab."],
+  ["PostgreSQL", "A popular free database used by many companies. Also called Postgres."],
+  ["SELECT", "Lists which columns you want in the result."],
+  ["FROM", "Names the table to read."],
+  ["WHERE", "Keeps only rows where a condition is true."],
+  ["ORDER BY", "Sorts the result."],
+  ["DESC", "Descending: biggest or latest first."],
+  ["ASC", "Ascending: smallest or earliest first. The default."],
+  ["GROUP BY", "Sorts rows into buckets that share a value, so SUM or COUNT runs once per bucket."],
+  ["HAVING", "Filters groups after GROUP BY, using totals like COUNT or SUM."],
+  ["SUM", "Adds up a column."],
+  ["COUNT", "Counts rows."],
+  ["AVG", "Averages a column."],
+  ["MAX", "The biggest (or latest) value in a column."],
+  ["JOIN", "Brings in a second table and lines its rows up with matching rows from the first."],
+  ["LEFT JOIN", "A join that keeps every row from the first table, even with no match."],
+  ["ON", "Says which columns must match in a JOIN."],
+  ["LIMIT", "Keeps only the first N rows of the result."],
+  ["TOP", "SQL Server's version of LIMIT. PostgreSQL uses LIMIT."],
+  ["AS", "Gives a result column (or table) a name."],
+  ["NULL", "Missing value. Not zero and not empty text."],
+  ["DATE_TRUNC", "Rounds a date down, for example to the first day of its month."],
+  ["primary key", "The column that uniquely names each row. Never repeated, never empty."],
+  ["PRIMARY", "Part of PRIMARY KEY: the column that uniquely names each row."],
+  ["foreign key", "A column that must match a primary key in another table."],
+  ["FOREIGN", "Part of FOREIGN KEY: a column that points to another table's primary key."],
+  ["REFERENCES", "Makes a foreign key: the value must exist in the other table."],
+  ["UNIQUE", "No two rows may have the same value in this column."],
+  ["NOT NULL", "This column can never be empty."],
+  ["CHECK", "A rule every row must pass, like price >= 0."],
+  ["SERIAL", "A whole-number column the database fills in automatically: 1, 2, 3…"],
+  ["NUMERIC", "An exact number type, good for money. NUMERIC(10, 2) keeps 2 decimals."],
+  ["CREATE TABLE", "Makes a new, empty table with the columns you list."],
+  ["customer_id", "The id number that names one customer."],
+  ["order_id", "The id number that names one order."],
+  ["API", "A web address built for programs: you send a request, it sends back data."],
+  ["URL", "A web address."],
+  ["endpoint", "The specific URL of an API you send requests to."],
+  ["parameters", "Extra details sent with a request, like latitude=30.27."],
+  ["params", "The requests argument for parameters: a dictionary that becomes ?name=value in the URL."],
+  ["JSON", "The text format APIs use for data, with { } for named values and [ ] for lists."],
+  ["status code", "A 3-digit number in every response: 200 success, 4xx your mistake, 5xx server's problem."],
+  ["requests", "The popular Python library for calling websites and APIs."],
+  ["get", "requests.get(url) asks a server for data. For dictionaries, .get(key) reads a value safely."],
+  ["post", "requests.post sends data to a server. We only want to read data, so we use get."],
+  ["json", "response.json() turns the JSON text in a response into Python dictionaries and lists."],
+  ["text", "response.text is the raw response as one string. .json() is usually more useful."],
+  ["timeout", "How long to wait for an answer before giving up."],
+  ["raise_for_status", "Turns an error status code (4xx or 5xx) into a Python error."],
+  ["zip", "Walks several lists side by side, one item from each at a time."],
+  ["range", "Produces a run of numbers: range(1, 4) gives 1, 2, 3."],
+  ["enumerate", "Loops over a list while also giving each item's position number."],
+  ["sleep", "time.sleep(2) pauses for 2 seconds."],
+  ["wait", "Not a real Python function. To pause, use time.sleep()."],
+  ["retry", "Trying again after a failure, usually after a short pause."],
+  ["ETL", "Extract, Transform, Load: pull data, clean it, save it to a database."],
+  ["pipeline", "A program that moves data through steps automatically, often on a schedule."],
+  ["validation", "Checking records against rules before accepting them."],
+  ["psycopg2", "The Python library for talking to PostgreSQL."],
+  ["cursor", "The object that sends SQL to the database over a connection."],
+  ["commit", "Saves database changes for real."],
+  ["rollback", "Undoes database changes since the last commit."],
+  ["%s", "A placeholder in psycopg2 SQL. The real value is passed separately and inserted safely."],
+  ["?", "A placeholder style used by some other database libraries. psycopg2 uses %s."],
+  ["CONFLICT", "In ON CONFLICT: what to do when an insert would duplicate a unique key."],
+  ["NOTHING", "In DO NOTHING: skip the row quietly."],
+  ["UPDATE", "Changes existing rows. As DO UPDATE it would overwrite instead of skipping."],
+  ["f-string", "Text starting with f that fills in {values}: f\"Hi {name}\"."],
+  ["logging", "Writing timestamped messages about what a program did, for later troubleshooting."],
+  ["environment variable", "A setting stored on the computer, outside the code. Used for passwords."],
+];
+
+GLOSSARY.push(
+  ["\"\"", "Empty quotes: a string with nothing in it. Replacing something with \"\" deletes it."],
+  ["\",\"", "A string holding just a comma."],
+  ["\" \"", "A string holding one space."],
+  ["\".\"", "A string holding a period. You don't want to delete this from money: it separates dollars from cents."],
+  [">", "Greater than. 5 > 3 is True. With ISO dates, the later date is greater."],
+  ["<", "Less than. 3 < 5 is True."],
+  ["data", "In this code, just the name of a variable. To get data out of a response you call response.json(); there is no response.data()."]
+);
+const GLOSSARY_ALIASES = {
+  ".strip()": ["strip"], ".title()": ["title"], ".upper()": ["upper"], ".lower()": ["lower"], ".replace(": ["replace"],
+  "raise_for_status": ["raise_for_status()"], "status code": ["status codes"], "parameters": ["parameter"],
+  "dictionary": ["dictionaries"], "string": ["strings"], "function": ["functions"], "variable": ["variables"], "duplicate": ["duplicates"],
+};
+const PROSE_TERMS = ["Python", "string", "variable", "function", "method", "CSV", "header", "module", "library", "dictionary", "loop", "script", "duplicate", "normalize", "SQL", "query", "database", "PostgreSQL", "primary key", "foreign key", "API", "URL", "endpoint", "parameters", "JSON", "status code", "ETL", "pipeline", "validation", "environment variable", "f-string", "logging", "NULL"];
+
 </script>
 <script>
 (function () {
@@ -1303,14 +1724,14 @@ function startLevel(id) {
   const l = LEVEL[id];
   if (!l) return viewMap();
   if (!levelOpen(l)) { location.hash = "#island-" + l.island.id; return; }
-  PL = { level: l, isl: l.island, queue: l.cards.map(c => ({ c })), done: 0, hearts: 3, mistakes: 0 };
+  PL = { level: l, isl: l.island, queue: l.cards.map(c => ({ c })), done: 0, hearts: 5, mistakes: 0 };
   app().innerHTML = '<div class="play k-' + l.island.kind + '"><div class="play-top"><a class="xbtn" href="#island-' + l.island.id + '" aria-label="Quit level">✕</a>' +
     '<div class="pbar"><i id="pfill"></i></div><div class="hearts" id="hearts" aria-label="Hearts"></div></div>' +
-    '<div class="play-sub"><span class="chip">Level ' + (l.index + 1) + " · " + esc(l.name) + '</span><span class="building">Building <code>' + esc(l.island.file) + "</code> → " + esc(l.part) + "</span></div>" +
+    '<div class="play-sub"><span class="chip">Level ' + (l.index + 1) + " · " + esc(l.name) + '</span><span class="building">Part of your script <code>' + esc(l.island.file) + "</code>: " + esc(l.part) + "</span></div>" +
     '<main class="card-wrap"><div id="card"></div></main><footer class="foot" id="foot"></footer></div>';
   renderCard();
 }
-function setHearts() { $("#hearts").innerHTML = [0, 1, 2].map(i => heartSvg(i < PL.hearts)).join(""); }
+function setHearts() { $("#hearts").innerHTML = [0, 1, 2, 3, 4].map(i => heartSvg(i < PL.hearts)).join(""); }
 function setProgress() { $("#pfill").style.width = Math.round(100 * PL.done / (PL.done + PL.queue.length)) + "%"; }
 
 function tableHtml(t, opts) {
@@ -1323,12 +1744,12 @@ function codeHtml(code) { return '<pre class="code">' + esc(code) + "</pre>"; }
 
 const R = {}; // renderers
 R.story = {
-  html: c => '<div class="bubble big">' + mayaHtml + '<div><div class="who">Maya</div><p>' + esc(c.say) + "</p></div></div>" +
+  html: c => '<div class="bubble big">' + mayaHtml + '<div><div class="who">Maya</div><p>' + linkTerms(esc(c.say)) + "</p></div></div>" +
     (c.show ? (c.show.table ? tableHtml(c.show.table) : codeHtml(c.show.code)) : ""),
   passive: true,
 };
 R.mcq = {
-  html: c => '<h2 class="q">' + esc(c.q) + "</h2>" + (c.code ? codeHtml(c.code) : "") + (c.table ? tableHtml(c.table) : "") +
+  html: c => '<h2 class="q">' + linkTerms(esc(c.q)) + "</h2>" + (c.code ? codeHtml(c.code) : "") + (c.table ? tableHtml(c.table) : "") +
     '<div class="opts">' + c._opts.map((o, k) => '<button class="opt" data-k="' + k + '"><span class="key">' + (k + 1) + "</span><span>" + esc(c.opts[o]) + "</span></button>").join("") + "</div>",
   prep: c => { c._opts = shuffle(c.opts.map((_, i) => i)); },
   bind: (el, c, st, ready) => el.addEventListener("click", e => {
@@ -1392,7 +1813,7 @@ R.fill = {
   html: c => {
     let k = 0;
     const code = esc(c.code).replace(/\[\[(\d+)\]\]/g, (_, n) => '<button class="slot" data-s="' + n + '" aria-label="Blank ' + (+n + 1) + '">&nbsp;</button>');
-    return '<h2 class="q">' + esc(c.q) + '</h2><pre class="code fillcode">' + code + '</pre><div class="chips">' + c._chips.map((t, i) => '<button class="tok" data-c="' + i + '">' + esc(t) + "</button>").join("") + "</div>";
+    return '<h2 class="q">' + esc(c.q) + '</h2><p class="hintline">Tap a word below to drop it into the next empty box. Tap a filled box to take it back.</p><pre class="code fillcode">' + code + '</pre><div class="chips">' + c._chips.map((t, i) => '<button class="tok" data-c="' + i + '">' + esc(t) + "</button>").join("") + "</div>";
   },
   prep: c => { c._chips = shuffle(c.blanks.concat(c.extra || [])); },
   bind: (el, c, st, ready) => {
@@ -1464,6 +1885,110 @@ R.api = {
   passive: true,
 };
 
+/* ---------------- word help ---------------- */
+const GL = GLOSSARY.map(([term, def]) => ({ term, def, keys: [term].concat(GLOSSARY_ALIASES[term] || []) }));
+const PROSE = new Set(PROSE_TERMS);
+const isWordKey = k => /^[A-Za-z_][A-Za-z_ \-]*$/.test(k);
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function wordsFor(c) {
+  const prose = [c.q, c.say].filter(Boolean).join(" \n ");
+  const chips = (c.blanks || []).concat(c.extra || []);
+  const code = [typeof c.code === "string" ? c.code : "", (c.lines || []).join("\n"), c.code === true ? (c.items || []).join("\n") : "", c.table ? c.table.cols.join(" ") : ""].filter(Boolean).join("\n");
+  const mixed = [(c.opts || []).join("\n"), (c.pairs || []).map(p => p.join("\n")).join("\n"), c.code !== true ? (c.items || []).join("\n") : ""].join("\n");
+  const found = [];
+  GL.forEach(g => {
+    let hit = false;
+    for (const k of g.keys) {
+      if (chips.indexOf(k) >= 0) { hit = true; break; }
+      if (!isWordKey(k)) { if (k.length > 3 && (code.indexOf(k) >= 0 || mixed.indexOf(k) >= 0)) { hit = true; break; } continue; }
+      const re = new RegExp("(^|[^A-Za-z_])" + reEsc(k) + "(?![A-Za-z_])", PROSE.has(g.term) ? "i" : "");
+      if (re.test(code)) { hit = true; break; }
+      if (new RegExp("(^|[^A-Za-z_])" + reEsc(k) + "\\s*\\(").test(mixed) || ((PROSE.has(g.term) || /^[A-Z][A-Z_ ]+$/.test(k)) && re.test(mixed))) { hit = true; break; }
+      if ((PROSE.has(g.term) || /[A-Z]/.test(k)) && re.test(prose)) { hit = true; break; }
+    }
+    if (hit && !found.some(f => f.def === g.def)) found.push(g);
+  });
+  return found.slice(0, 14);
+}
+function linkTerms(escaped) {
+  let out = escaped;
+  const used = new Set();
+  GL.filter(g => PROSE.has(g.term)).forEach(g => {
+    for (const k of g.keys) {
+      if (used.has(g.term)) break;
+      const re = new RegExp("(^|[^A-Za-z_>&;])(" + reEsc(k) + ")(?![A-Za-z_])", "i");
+      if (re.test(out)) {
+        out = out.replace(re, (m, p, w) => p + '<button type="button" class="term" data-term="' + esc(g.term) + '">' + w + "</button>");
+        used.add(g.term);
+      }
+    }
+  });
+  return out;
+}
+function openSheet(title, entries) {
+  closeSheet();
+  const d = document.createElement("div");
+  d.className = "sheet-wrap"; d.id = "sheet";
+  d.innerHTML = '<div class="sheet" role="dialog" aria-modal="true" aria-label="' + esc(title) + '"><div class="sheet-head"><b>' + esc(title) + '</b><button class="sheet-x" aria-label="Close">✕</button></div><dl>' +
+    entries.map(g => "<dt><code>" + esc(g.term) + "</code></dt><dd>" + esc(g.def) + "</dd>").join("") + "</dl></div>";
+  document.body.appendChild(d);
+  d.addEventListener("click", e => { if (e.target === d || e.target.closest(".sheet-x")) closeSheet(); });
+  $(".sheet-x", d).focus();
+}
+function closeSheet() { const s = $("#sheet"); if (s) s.remove(); }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+document.addEventListener("click", e => {
+  const t = e.target.closest(".term");
+  if (t) { e.preventDefault(); e.stopPropagation(); const g = GL.find(x => x.term === t.dataset.term); if (g) openSheet(g.term, [g]); }
+}, true);
+
+/* ---------------- learn + lab renderers ---------------- */
+const pyRepr = v => typeof v === "number" ? (Number.isInteger(v) ? v.toFixed(1) : String(v)) : '"' + v + '"';
+const LAB_OPS = {
+  strip: { label: ".strip()", f: s => s.trim() },
+  title: { label: ".title()", f: s => s.toLowerCase().replace(/(^|[^a-z])([a-z])/g, (m, p, c) => p + c.toUpperCase()) },
+  upper: { label: ".upper()", f: s => s.toUpperCase() },
+  lower: { label: ".lower()", f: s => s.toLowerCase() },
+  dollar: { label: '.replace("$", "")', f: s => s.split("$").join("") },
+  comma: { label: '.replace(",", "")', f: s => s.split(",").join("") },
+  float: { label: "float( )", wrap: true, f: s => { if (!/^\s*[+-]?(\d+\.?\d*|\.\d+)\s*$/.test(s)) throw new Error("ValueError: could not convert string to float: '" + s + "'"); return parseFloat(s); } },
+};
+R.learn = {
+  html: c => '<div class="learn"><span class="learn-tag">New idea</span><h2 class="learn-term">' + esc(c.term) + '</h2><p class="big">' + linkTerms(esc(c.say)) + "</p>" +
+    (c.like ? '<div class="like"><b>Think of it like this</b><p>' + esc(c.like) + "</p></div>" : "") +
+    (c.chain ? '<div class="chain">' + c.chain.map((s, i) => (i ? '<div class="chain-step"><span class="op">' + esc(s[0]) + '</span></div>' : "") + '<div class="val' + (i === c.chain.length - 1 ? " last" : "") + '">' + (i ? "" : '<span class="op0">' + esc(s[0]) + "</span>") + "<code>" + esc(s[1]) + "</code></div>").join("") + "</div>" : "") +
+    (c.code ? '<div class="ex"><span class="ex-label">' + esc(c.codeLabel || "Example") + "</span>" + codeHtml(c.code) + "</div>" : "") +
+    (c.out !== undefined ? '<div class="ex"><span class="ex-label">' + (/Error/.test(c.out) ? "Python says" : "What it shows") + '</span><pre class="outbox' + (/Error/.test(c.out) ? " err" : "") + '">' + esc(c.out) + "</pre></div>" : "") +
+    (c.table ? '<div class="ex"><span class="ex-label">' + esc(c.tableLabel || "Result") + "</span>" + tableHtml(c.table) + "</div>" : "") + "</div>",
+  passive: true, cta: "Got it",
+};
+R.lab = {
+  html: c => '<span class="learn-tag try">Try it</span><h2 class="q">' + esc(c.q) + '</h2><div class="lab"><div class="lab-row"><span class="ex-label">Code</span><pre class="code" id="labexpr"></pre></div>' +
+    '<div class="lab-row"><span class="ex-label">Value now</span><div class="lab-val" id="labval"></div></div><div class="lab-goal">Goal: <code>' + esc(pyRepr(c.goal)) + "</code></div>" +
+    '<div class="chips">' + c.ops.map(o => '<button class="tok" data-op="' + o + '">' + esc(LAB_OPS[o].label) + "</button>").join("") + '</div><button class="linkbtn" id="labreset">Start over</button><div id="labmsg"></div></div>',
+  passive: true, cta: "Continue",
+  bind: (el, c, st, ready) => {
+    const reset = () => { st.v = c.start; st.expr = pyRepr(c.start); st.err = ""; draw(); };
+    const draw = () => {
+      $("#labexpr", el).textContent = st.expr;
+      $("#labval", el).innerHTML = "<code>" + esc(pyRepr(st.v)) + "</code>";
+      const done = st.v === c.goal;
+      $("#labmsg", el).innerHTML = st.err ? '<div class="lab-err">' + esc(st.err) + "<br>float() can only read text that is already just a number.</div>" : done ? '<div class="lab-ok">You did it. That code is exactly what you\'ll use in the script.</div>' : "";
+      $$("[data-op]", el).forEach(b => { b.disabled = done || typeof st.v !== "string"; });
+      if (done) ready(true);
+    };
+    el.addEventListener("click", e => {
+      if (e.target.closest("#labreset")) { reset(); return; }
+      const b = e.target.closest("[data-op]"); if (!b) return;
+      const op = LAB_OPS[b.dataset.op];
+      try { st.v = op.f(st.v); st.expr = op.wrap ? "float(" + st.expr + ")" : st.expr + op.label; st.err = ""; }
+      catch (err) { st.err = err.message; }
+      draw();
+    });
+    reset();
+  },
+};
+
 function renderCard() {
   setHearts(); setProgress();
   const item = PL.queue[0];
@@ -1472,11 +1997,13 @@ function renderCard() {
   if (r.prep) r.prep(c);
   const st = (PL.st = {});
   const el = $("#card");
-  el.innerHTML = '<div class="card in">' + r.html(c) + "</div>";
+  const words = c.t === "learn" || c.t === "story" ? [] : wordsFor(c);
+  el.innerHTML = '<div class="card in">' + r.html(c) + (words.length ? '<button class="linkbtn help" id="helpbtn">What do these words mean?</button>' : "") + "</div>";
+  if (words.length) $("#helpbtn", el).onclick = () => openSheet("Words on this card", words);
   const foot = $("#foot");
   foot.className = "foot";
   if (r.passive) {
-    foot.innerHTML = '<div class="foot-in"><span></span><button class="gbtn green" id="go"' + (c.t === "api" ? " disabled" : "") + ">Continue</button></div>";
+    foot.innerHTML = '<div class="foot-in"><span></span><button class="gbtn green" id="go"' + (c.t === "api" || c.t === "lab" ? " disabled" : "") + ">" + (r.cta || "Continue") + "</button></div>";
     $("#go").onclick = next;
   } else if (r.auto) {
     foot.innerHTML = '<div class="foot-in"><span class="muted">Match all the pairs to continue.</span></div>';
@@ -1515,7 +2042,7 @@ function next() {
 }
 function outOfHearts() {
   $("#foot").className = "foot"; $("#foot").innerHTML = "";
-  $("#card").innerHTML = '<div class="card in center"><div class="big-ico">' + heartSvg(false) + heartSvg(false) + heartSvg(false) + '</div><h2 class="q">Out of hearts</h2><p>Every engineer breaks things. The answers you just saw are fresh in your head, so this run will go better.</p><div class="row-c"><button class="gbtn green" id="retry">Try the level again</button><a class="gbtn sand" href="#island-' + PL.isl.id + '">Back to the island</a></div></div>';
+  $("#card").innerHTML = '<div class="card in center"><div class="big-ico">' + heartSvg(false) + heartSvg(false) + heartSvg(false) + heartSvg(false) + heartSvg(false) + '</div><h2 class="q">Out of hearts</h2><p>Every engineer breaks things. The answers you just saw are fresh in your head, so this run will go better.</p><div class="row-c"><button class="gbtn green" id="retry">Try the level again</button><a class="gbtn sand" href="#island-' + PL.isl.id + '">Back to the island</a></div></div>';
   $("#retry").onclick = () => startLevel(PL.level.id);
 }
 function finishLevel() {
@@ -1546,7 +2073,7 @@ function readme(isl) {
     : "python " + isl.file;
   return "# " + isl.name.replace(/ .*/, "") + ": " + isl.project + "\n\n" +
     "## The problem\n\n" + isl.brief + "\n\n## What it does\n\n" +
-    isl.levels.map((l, i) => (i + 1) + ". **" + l.part + "**: " + l.name).join("\n") +
+    isl.levels.filter(l => l.id !== "csv0").map((l, i) => (i + 1) + ". **" + l.part + "**: " + l.name).join("\n") +
     "\n\n## Run it\n\n```bash\n" + run + "\n```\n\n## Skills\n\n" + skillsFor(isl).map(s => "- " + s).join("\n") + "\n";
 }
 function skillsFor(isl) {
@@ -1585,6 +2112,7 @@ function viewPortfolio() {
 
 /* ---------------- router ---------------- */
 function route() {
+  closeSheet();
   app().onclick = null;
   const h = (location.hash || "#map").slice(1);
   const i = h.indexOf("-"), base = i < 0 ? h : h.slice(0, i), arg = i < 0 ? "" : h.slice(i + 1);
